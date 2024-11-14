@@ -21,21 +21,23 @@ interface dadosProduto {
   imagem: string;
 }
 
-interface Categoria {
-    id: number
-    nome: string
-  }
-
 const Produto: FC = () => {
-  const [produtos, setProdutos] = useState<Produto>({} as Produto)
-  const [categorias, setCategorias] = useState<Categoria>({} as Categoria)
+  const [produto, setProduto] = useState<dadosProduto>({} as dadosProduto)
   const {id_produto} = useParams<{ id_produto: string }>();
 
   useEffect(() => {
     const fetchProduto = async () => {
       const response = await axios.get(`${import.meta.env.VITE_URL}/produtos/${id_produto}/`)
-      const produtos = await response.data
-      setProdutos(produtos)
+      const produtoData = await response.data
+
+      const cat_response = await axios.get(`${import.meta.env.VITE_URL}/categorias/${produtoData.categoria}/`);
+      const categoria = await cat_response.data
+
+      
+      setProduto({
+        ...produtoData,
+        categoria: categoria.nome, // Atribui o nome da categoria
+      });
     }
     fetchProduto()
   }, [id_produto])
@@ -47,18 +49,18 @@ const Produto: FC = () => {
             <div className="grid grid-cols-2 gap-4 items-center justify-center h-full px-4">
                 {/* Coluna esquerda */}
                 <div className="flex justify-center items-center">
-                <img src={produtos.imagem} className="w-64 h-64 object-cover rounded-lg shadow-2xl"></img>
+                <img src={produto.imagem} className="w-64 h-64 object-cover rounded-lg shadow-2xl"></img>
                 </div>
 
                 {/* Coluna direita */}
                 <div className="flex-col ml-4">
                 {/* Coloque aqui o conteúdo da segunda coluna */}
-                <h1 className="text-2xl font-bold">{produtos.nome}</h1>
-                <p>{produtos.descricao}</p>
-                <h1>{produtos.categoria}</h1>
-                <h1>{produtos.preco}</h1>
-                <h1>{produtos.nome}</h1>
-                <h1>{produtos.nome}</h1>
+                <h1 className="text-2xl font-bold">{produto.nome}</h1>
+                <p>{produto.descricao}</p>
+                <h1>{produto.categoria}</h1>
+                <h1>{produto.preco}</h1>
+                <h1>{produto.nome}</h1>
+                <h1>{produto.nome}</h1>
 
 
                 </div>
