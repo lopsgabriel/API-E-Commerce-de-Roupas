@@ -13,10 +13,10 @@ interface Produto {
 
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
-
+  
   useEffect(() => {
     const fetchProdutos = async () => {
-      const response = await axios.get(`${import.meta.env.VITE_URL}`)
+      const response = await axios.get(`${import.meta.env.VITE_URL}/produtos`)
       const produtos = await response.data
       setProdutos(produtos)
     }

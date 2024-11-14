@@ -19,5 +19,5 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all().order_by('nome')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['nome', 'preco']
-    search_fields = ['nome', 'preco', 'categoria']
+    search_fields = ['nome', 'preco', 'categoria__nome']
     serializer_class = ProdutoSerializer

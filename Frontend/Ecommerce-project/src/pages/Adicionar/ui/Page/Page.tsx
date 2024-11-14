@@ -1,47 +1,106 @@
-import { FC, useState, ChangeEvent, FormEvent } from "react";
+import { FC, useState, useEffect, ChangeEvent, FormEvent } from "react";
+import axios, { AxiosError } from "axios";
 
 interface Produto {
-  nome: string;
-  descricao: string;
-  preco: string;
-  estoque: string;
-  categoria: string;
-  foto: File | null;
+  nome: string
+  descricao: string
+  preco: number
+  estoque: number
+  categoria: number
+  foto: File | null
 }
 
+interface DadosResposta {
+  id: number
+  success: boolean
+}
+
+interface Categoria {
+  id: number
+  nome: string
+}
 
 const Adicionar: FC = () => {
+  const [categorias, setCategorias] = useState<Categoria[]>([])
   const [produto, setProduto] = useState<Produto>({
     nome: "",
     descricao: "",
-    preco: "",
-    estoque: "",
-    categoria: "",
+    preco: 0,
+    estoque: 0,
+    categoria: 0,
     foto: null,
-  });
+  })
+  
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await axios.get<Categoria[]>(`${import.meta.env.VITE_URL}/categorias`)
+        setCategorias(response.data)
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error)
+      }
+    }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProduto({ ...produto, [name]: value });
-  };
+    fetchCategorias();
+  }, []);
+  const CriarProduto = async (produto: Produto) => {
+    const formData = new FormData();
+    formData.append("nome", produto.nome)
+    formData.append("descricao", produto.descricao)
+    formData.append("preco", String(produto.preco))
+    formData.append("estoque", String(produto.estoque))
+    formData.append("categoria", String(produto.categoria))
+    if (produto.foto) {
+      formData.append("imagem", produto.foto as File)
+    }
+
+    try {
+      const response = await axios.post<DadosResposta>(`${import.meta.env.VITE_URL}produtos/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      console.log(response.data)
+    } catch (error ) {
+      if (error instanceof AxiosError) {
+        console.error("Erro na resposta:", error.response?.data)
+        console.error("Código de status:", error.response?.status)
+      } else {
+        console.error("Erro ao enviar o produto:", error)
+      }
+    }
+  }
+
+  const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setProduto({ ...produto, [name]: value })
+  }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setProduto({ ...produto, foto: e.target.files[0] });
+    if (e.target.files && e.target.files.length > 0) {
+        setProduto({ ...produto, foto: e.target.files[0] })
+        console.log("Arquivo selecionado:", e.target.files[0])
+        console.log(produto)
+    } else {
+        console.warn("Nenhum arquivo selecionado");
     }
-  };
+}
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // Substitua por lógica para enviar ao backend
-    console.log(produto);
-  };
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    try {
+      if (produto.foto) {
+        await CriarProduto(produto)
+        console.log('Produto criado com sucesso')
+      }
+      
+    } catch (error) {
+      console.error('Erro ao criar produto:', error)
+    }
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-base-200 ">
       <form onSubmit={handleSubmit} className=" bg-base-100  p-8 rounded-xl shadow-lg w-full max-w-lg">
         <h1 className="text-2xl font-bold mb-6 text-center">Adicionar Produto</h1>
-
         <div className="mb-4">
           <label htmlFor="nome" className="block font-medium mb-2">Nome:</label>
           <input
@@ -54,7 +113,6 @@ const Adicionar: FC = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <label htmlFor="descricao" className="block font-medium mb-2">Descrição:</label>
           <textarea
@@ -67,7 +125,6 @@ const Adicionar: FC = () => {
             required
           ></textarea>
         </div>
-
         <div className="mb-4">
           <label htmlFor="preco" className="block font-medium mb-2">Preço:</label>
           <input
@@ -80,7 +137,6 @@ const Adicionar: FC = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <label htmlFor="estoque" className="block font-medium mb-2">Estoque:</label>
           <input
@@ -93,18 +149,23 @@ const Adicionar: FC = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <label htmlFor="categoria" className="block font-medium mb-2">Categoria:</label>
-          <input
-            type="text"
+          <select
             id="categoria"
             name="categoria"
             value={produto.categoria}
             onChange={handleChange}
             className="w-full px-4 bg-base-100 py-2 border rounded"
             required
-          />
+          >
+            <option value={0}>Selecione uma categoria</option>
+            {categorias.map(categoria => (
+              <option key={categoria.id} value={categoria.id} >
+                {categoria.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mb-6">
@@ -114,17 +175,16 @@ const Adicionar: FC = () => {
             id="foto"
             name="foto"
             onChange={handleFileChange}
-            className="w-full"
+            className="w-full px-4 bg-base-100 py-2 border rounded"
             required
           />
         </div>
-
         <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-bold rounded hover:bg-blue-600">
           Adicionar Produto
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Adicionar;
+export default Adicionar
