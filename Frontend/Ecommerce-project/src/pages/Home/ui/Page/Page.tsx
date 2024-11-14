@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import axios from "axios"
 import React from "react";
+import { Link } from 'react-router-dom';
 
 interface Produto {
   id: number;
@@ -32,19 +33,20 @@ const Home: FC = () => {
               {produtos.map((produto) => (
                 <React.Fragment key={produto.id}>
                   <div>
-                    
-                    {produto.imagem && (
-                      <img
-                        src= {produto.imagem}
-                        className="w-64 h-64 object-cover rounded-lg shadow-2xl"
-                      />
-                    )}
-                    <h1 className="text-2xl font-bold">{produto.nome}</h1>
-                    <p className="py-5">
-                      {produto.descricao}
-                      <br />
-                      {produto.preco}
-                    </p>
+                    <Link to={`produto/${produto.id}`}>
+                      {produto.imagem && (
+                        <img 
+                          src= {produto.imagem}
+                          className="w-64 h-64 object-cover rounded-lg shadow-2xl"
+                        />
+                      )}
+                      <h1 className="text-2xl font-bold">{produto.nome}</h1>
+                      <p className="py-5">
+                        {produto.descricao}
+                        <br />
+                        {produto.preco}
+                      </p>
+                    </Link>
                   </div>
                 </React.Fragment>
               ))}
