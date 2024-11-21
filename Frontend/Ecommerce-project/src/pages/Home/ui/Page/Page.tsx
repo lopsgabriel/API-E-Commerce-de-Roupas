@@ -14,13 +14,26 @@ interface Produto {
 
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
-  
+
   useEffect(() => {
     const fetchProdutos = async () => {
-      const response = await axios.get(`${import.meta.env.VITE_URL}/produtos`)
-      const produtos = await response.data
-      setProdutos(produtos)
+      if(localStorage.getItem('access_token') === null){           
+        window.location.href = '/login'
+      } else {
+        try{
+          const response = await axios.get(`${import.meta.env.VITE_URL}/produtos`, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          })
+          const produtos = await response.data
+          setProdutos(produtos)
+          } catch (e) {
+            console.log('not auth')
+          }
+      }
     }
+      
     fetchProdutos()
   }, [])
 
