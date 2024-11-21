@@ -7,16 +7,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class PerfilViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [ BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [ BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Perfil.objects.all().order_by('usuario')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = PerfilSerializer
 
 #futuramente retirar o itemcarrinhoviewset
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [ BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [ BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Item_carrinho.objects.all().order_by('produto')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = ItemCarrinhoSerializer
