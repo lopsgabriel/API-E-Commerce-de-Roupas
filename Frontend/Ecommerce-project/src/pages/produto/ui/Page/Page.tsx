@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react"
-import axios from "axios"
 import { useParams } from "react-router-dom";
+import { fetchAuthApi } from "@/components";
+import { useNavigate } from "react-router-dom";
 
 interface Produto {
   id: number;
@@ -24,14 +25,15 @@ interface dadosProduto {
 const Produto: FC = () => {
   const [produto, setProduto] = useState<dadosProduto>({} as dadosProduto)
   const {id_produto} = useParams<{ id_produto: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduto = async () => {
-      const response = await axios.get(`${import.meta.env.VITE_URL}/produtos/${id_produto}/`)
-      const produtoData = await response.data
+      const refresh_token = localStorage.getItem('refresh_token')
+      const produtoData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${id_produto}/`, refresh_token, navigate)
 
-      const cat_response = await axios.get(`${import.meta.env.VITE_URL}/categorias/${produtoData.categoria}/`);
-      const categoria = await cat_response.data
+      const cat_response = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produtoData.categoria}/`, refresh_token, navigate);
+      const categoria = await cat_response
 
       
       setProduto({
@@ -40,7 +42,7 @@ const Produto: FC = () => {
       });
     }
     fetchProduto()
-  }, [id_produto])
+  }, [id_produto, navigate])
 
   return (
     <>

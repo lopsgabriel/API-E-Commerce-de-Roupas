@@ -1,7 +1,10 @@
 import { FC, useEffect, useState } from "react"
-import axios from "axios"
+// import axios from "axios"
+import { fetchAuthApi } from "@/components";
 import React from "react";
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 
 interface Produto {
   id: number;
@@ -14,28 +17,20 @@ interface Produto {
 
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchProdutos = async () => {
-      if(localStorage.getItem('access_token') === null){           
-        window.location.href = '/login'
-      } else {
-        try{
-          const response = await axios.get(`${import.meta.env.VITE_URL}/produtos`, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          })
-          const produtos = await response.data
-          setProdutos(produtos)
-          } catch (e) {
-            console.log('not auth')
-          }
+      const refreshtoken = localStorage.getItem('refresh_token');
+      const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos`, refreshtoken, navigate);
+
+      if (produtosData) {
+        console.log(produtosData)
+        setProdutos(produtosData);
       }
-    }
-      
+    }   
     fetchProdutos()
-  }, [])
+  }, [navigate])
 
   return (
     <>
