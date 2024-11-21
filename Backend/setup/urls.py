@@ -12,7 +12,7 @@ router.register('produtos', ProdutoViewSet, basename='Produtos')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('roupas/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ]
 
 if settings.DEBUG:
