@@ -98,7 +98,7 @@ const Adicionar: FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base-200 ">
+    <div className="flex items-center justify-center min-h-screen bg-base-200 py-3">
       <form onSubmit={handleSubmit} className=" bg-base-100  p-8 rounded-xl shadow-lg w-full max-w-lg">
         <h1 className="text-2xl font-bold mb-6 text-center">Adicionar Produto</h1>
         <div className="mb-4">

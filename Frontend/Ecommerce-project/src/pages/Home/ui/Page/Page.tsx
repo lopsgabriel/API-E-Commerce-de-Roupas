@@ -23,9 +23,7 @@ const Home: FC = () => {
     const fetchProdutos = async () => {
       const refreshtoken = localStorage.getItem('refresh_token');
       const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos`, refreshtoken, navigate);
-
       if (produtosData) {
-        console.log(produtosData)
         setProdutos(produtosData);
       }
     }   

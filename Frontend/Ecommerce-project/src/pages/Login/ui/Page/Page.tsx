@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,12 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      navigate("/dashboard")
+    }
+  }, [navigate])
 
   const handleLogin = async () => {
     const user = { username, password }
@@ -19,7 +25,6 @@ const Login = () => {
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data['access']}`;
-      alert("Login bem sucedido")
       navigate("/dashboard")
     } catch (err) {
       setError("Credenciais inválidas")

@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated) {
     // Se não estiver autenticado, redireciona para a página de login
 
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return children; // Se estiver autenticado, renderiza o conteúdo

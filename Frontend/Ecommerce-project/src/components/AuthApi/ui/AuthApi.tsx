@@ -4,7 +4,7 @@ const fetchAuthApi = async (url: string, refreshtoken: string | null, navigate: 
   const accesstoken = localStorage.getItem('access_token');
   
   if (!accesstoken) {
-    navigate('/login');
+    navigate('/');
     return null;
   }
 
@@ -38,17 +38,18 @@ const fetchAuthApi = async (url: string, refreshtoken: string | null, navigate: 
 
           return retryResponse.data
         } catch (refreshError) {
+          localStorage.removeItem('access_token')
           console.error('refresh token invalido ou expirado', refreshError)
-          navigate('/login')
+          navigate('/')
         }
       } else {
         console.error('Erro ao buscar produtos', error)
-        navigate('/login')
+        navigate('/')
         return null
       }
     } else {
       console.error('erro desconhecido', error)
-      navigate('/login')
+      navigate('/')
       return null
     }
   }
