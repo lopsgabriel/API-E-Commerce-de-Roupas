@@ -10,6 +10,7 @@ interface Produto {
   id: number;
   nome: string;
   descricao: string;
+  categoria: string;
   preco: number;
   estoque: number;
   imagem: string;
@@ -21,44 +22,51 @@ const Home: FC = () => {
 
   useEffect(() => {
     const fetchProdutos = async () => {
-      const refreshtoken = localStorage.getItem('refresh_token');
-      const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos`, refreshtoken, navigate);
-      if (produtosData) {
-        setProdutos(produtosData);
+      try {
+        const refreshtoken = localStorage.getItem("refresh_token");
+        const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/`, refreshtoken, navigate );
+
+        const produtosComCategoria = await Promise.all( produtosData.map(async (produto: Produto) => {
+          const catResponse = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produto.categoria}/`, refreshtoken, navigate );
+          return {
+            ...produto,
+            categoria: catResponse.nome, // Atribuir nome da categoria
+          };
+        }));
+
+        setProdutos(produtosComCategoria);
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
       }
-    }   
-    fetchProdutos()
-  }, [navigate])
+    };
+
+    fetchProdutos();
+  }, [navigate]);
 
   return (
     <>
       <section>
         <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
           <div className="hero-content flex flex-col gap-4 w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
               {produtos.map((produto) => (
                 <React.Fragment key={produto.id}>
-                  <div>
+                  <div className="max-w-xs mx-auto"> {/* Limita a largura do card */}
                     <Link to={`produto/${produto.id}`}>
-                      {produto.imagem && (
-                        <img 
-                          src= {produto.imagem}
-                          className="w-64 h-64 object-cover rounded-lg shadow-2xl"
-                        />
-                      )}
-                      <h1 className="text-2xl font-bold">{produto.nome}</h1>
-                      <p className="py-5">
-                        {produto.descricao}
-                        <br />
-                        {produto.preco}
-                      </p>
+                      <div className="hover:scale-105 duration-300">
+                        <img src={produto.imagem} className="w-64 h-64 object-cover rounded-t-lg shadow-2xl" />
+                        <div className="bg-white p-4 rounded-b-lg">
+                          <p className="text-sm font-light text-gray-700 opacity-90 pt-1">{produto.categoria}</p>
+                          <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">{produto.nome}</h1>
+                          <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
+                            R${produto.preco}
+                          </p>
+                        </div>
+                      </div>
                     </Link>
                   </div>
                 </React.Fragment>
               ))}
-            </div>
-            <div className="flex justify-center mt-5">
-              <button className="btn-primary btn">Get Started</button>
             </div>
           </div>
         </div>
