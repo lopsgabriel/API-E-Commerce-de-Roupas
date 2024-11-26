@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from perfil.views import PerfilViewSet,ItemCarrinhoViewSet
+from perfil.views import PerfilViewSet,ItemCarrinhoViewSet, listaCarrinhoViewSet
 from roupas.views import CategoriaViewSet, ProdutoViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
@@ -18,6 +18,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('carrinhos/perfil/<str:usuario>/', listaCarrinhoViewSet.as_view(), name='Carrinho')
 ]
 
 if settings.DEBUG:

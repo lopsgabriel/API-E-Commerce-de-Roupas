@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Perfil, Item_carrinho
 from roupas.models import Produto
 
+
 class ItemCarrinhoSerializer(serializers.ModelSerializer):
     produto = serializers.StringRelatedField()
     perfil_carrinho = serializers.StringRelatedField()
@@ -17,3 +18,8 @@ class PerfilSerializer(serializers.ModelSerializer):
         model = Perfil
         fields = ['id', 'usuario', 'carteira', 'carrinho']
 
+class ListaCarrinhoSerializer(serializers.ModelSerializer):
+    produto = serializers.StringRelatedField()
+    class Meta:
+        model = Item_carrinho
+        fields = ['id', 'produto', 'quantidade']
