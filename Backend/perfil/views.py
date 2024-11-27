@@ -29,7 +29,8 @@ class listaCarrinhoViewSet(generics.ListAPIView):
         usuario = self.kwargs['usuario']  #Pega o nome do usuario pela url
         try:
             #Busca o perfil pelo usuario passado na url
-            perfil = Perfil.objects.get(usuario__username=usuario)
+            perfil = Perfil.objects.get(id=usuario)
+
             #Retorna os itens do carrinho associado ao usuario
             return Item_carrinho.objects.filter(perfil_carrinho=perfil)
         except Perfil.DoesNotExist:

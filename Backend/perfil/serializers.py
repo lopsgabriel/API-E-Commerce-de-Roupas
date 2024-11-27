@@ -22,4 +22,4 @@ class ListaCarrinhoSerializer(serializers.ModelSerializer):
     produto = serializers.StringRelatedField()
     class Meta:
         model = Item_carrinho
-        fields = ['id', 'produto', 'quantidade']
+        fields = ['id', 'produto', 'preco', 'quantidade']
