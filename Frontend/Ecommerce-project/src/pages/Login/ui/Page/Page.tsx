@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [username, setUsername] = useState("")
@@ -24,6 +25,11 @@ const Login = () => {
       localStorage.clear()
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
+
+      const decoded = jwtDecode(response.data.access) as { user_id: string };
+      localStorage.setItem("user_id", decoded.user_id)
+      console.log(decoded.user_id)
+      
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data['access']}`;
       navigate("/dashboard")
     } catch (err) {

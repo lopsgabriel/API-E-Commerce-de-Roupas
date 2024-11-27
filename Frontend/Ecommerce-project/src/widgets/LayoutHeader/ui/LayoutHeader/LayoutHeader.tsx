@@ -1,10 +1,10 @@
 import { FC, useEffect } from "react";
 import { Logo } from "@/widgets";
 import Menu from "../Menu/Menu";
-import { TbShoppingCart } from "react-icons/tb";
 import User from "../User/User";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Carrinho from "../Carrinho/Carrinho";
 
 const LayoutHeader: FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -50,7 +50,9 @@ const LayoutHeader: FC = () => {
                 </button>
                 {/* botao do carrinho */}
                 <button className="btn-ghost btn-circle btn">
-                <TbShoppingCart className="w-5 h-5"/>
+                  <div className="indicator">
+                    <Carrinho />
+                  </div>
                 </button>
 
                 {/* botao de usuario */}
