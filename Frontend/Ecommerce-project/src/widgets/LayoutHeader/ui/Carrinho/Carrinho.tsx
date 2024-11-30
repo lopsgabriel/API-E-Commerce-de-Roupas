@@ -40,7 +40,7 @@ const Carrinho: FC = () => {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box menu-sm right-0 z-10 mt-3 w-80 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box menu-sm right-0 mt-3 w-80 bg-base-100 p-2 shadow z-10 "
           >
             {produtos_carrinho.length === 0 ? (
               <li>
@@ -73,10 +73,10 @@ const Carrinho: FC = () => {
               <div>
                 <div className="font-bold">Total:</div>
                 <div className="text-sm opacity-50">Preço: R${produtos_carrinho.reduce((total, carrinho) => total + carrinho.preco * carrinho.quantidade, 0)}</div>
-                <div className="text-sm opacity-50">Quantidade: {produtos_carrinho.reduce((total, carrinho) => total + carrinho.quantidade, 0)}</div>
+                <div className="text-sm opacity-50">Itens: {produtos_carrinho.reduce((total, carrinho) => total + carrinho.quantidade, 0)}</div>
               </div>
             </div>
-            <button className="btn btn-primary">Finalizar compra</button>
+            <a href="/cart" className="flex justify-center items-center btn btn-primary">Ver Carrinho</a>
         </ul>
         </div>
       </div>

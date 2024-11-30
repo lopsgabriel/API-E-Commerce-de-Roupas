@@ -28,7 +28,7 @@ const LayoutHeader: FC = () => {
             ]}
           />
           <Logo logoName={"E-Loja"} />
-          <div className="navbar-end">
+          <div className="navbar-end relative">
             {isAuthenticated ? (
               <>
                 {/* botao de pesquisa */}
@@ -49,14 +49,11 @@ const LayoutHeader: FC = () => {
                   </svg>
                 </button>
                 {/* botao do carrinho */}
-                <button className="btn-ghost btn-circle btn">
                   <div className="indicator">
                     <Carrinho />
                   </div>
-                </button>
 
                 {/* botao de usuario */}
-                <button className="btn-ghost btn-circle btn">
                   <div className="indicator">
                   <User
                     links={[
@@ -65,7 +62,6 @@ const LayoutHeader: FC = () => {
                     ]}
                   />
                   </div>
-                </button>
               </>
             ):null }
           </div>

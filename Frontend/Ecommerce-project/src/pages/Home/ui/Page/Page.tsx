@@ -30,7 +30,7 @@ const Home: FC = () => {
           const catResponse = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produto.categoria}/`, refreshtoken, navigate );
           return {
             ...produto,
-            categoria: catResponse.nome, // Atribuir nome da categoria
+            categoria: catResponse.nome, 
           };
         }));
 

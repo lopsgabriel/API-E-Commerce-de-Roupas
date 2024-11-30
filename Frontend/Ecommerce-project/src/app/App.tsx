@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "@/app/Layout";
-import { Home, NoMatch, Adicionar, Produto, Login, Logout,} from "@/pages";
+import { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart } from "@/pages";
 import { PrivateRoute } from "@/components";
 
 const App: FC = () => {
@@ -10,7 +10,6 @@ const App: FC = () => {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={ <Login /> } />
-        
         <Route path="dashboard" element={
             <PrivateRoute>
               <Home />
@@ -33,6 +32,12 @@ const App: FC = () => {
             <PrivateRoute>
               <Logout />
             </PrivateRoute>
+          }
+        />
+        <Route path="cart" element={
+          <PrivateRoute>
+            <Cart />
+          </PrivateRoute>
           }
         />
         {/* Rota para páginas não encontradas */}
