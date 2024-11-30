@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "@/app/Layout";
-import { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart } from "@/pages";
+import { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria } from "@/pages";
 import { PrivateRoute } from "@/components";
 
 const App: FC = () => {
@@ -39,6 +39,12 @@ const App: FC = () => {
             <Cart />
           </PrivateRoute>
           }
+        />
+        <Route path="categoria/:categoria" element={
+          <PrivateRoute>
+            <Categoria />
+          </PrivateRoute>
+        }
         />
         {/* Rota para páginas não encontradas */}
         <Route path="*" element={<NoMatch />} />

@@ -61,8 +61,6 @@ const Produto: FC = () => {
                 <p>{produto.descricao}</p>
                 <h1>{produto.categoria}</h1>
                 <h1>{produto.preco}</h1>
-                <h1>{produto.nome}</h1>
-                <h1>{produto.nome}</h1>
 
 
                 </div>
