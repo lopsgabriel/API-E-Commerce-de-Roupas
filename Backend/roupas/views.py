@@ -14,7 +14,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
-    queryset = Produto.objects.all().order_by('nome')
+    queryset = Produto.objects.all().order_by('categoria')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['nome', 'preco']
     search_fields = ['nome', 'preco', 'categoria__nome']
