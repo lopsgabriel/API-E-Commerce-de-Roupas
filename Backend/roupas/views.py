@@ -19,3 +19,11 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nome', 'preco']
     search_fields = ['nome', 'preco', 'categoria__nome']
     serializer_class = ProdutoSerializer
+
+class CategoriaProdutosViewSet(viewsets.ModelViewSet):
+    serializer_class = ProdutoSerializer
+
+    def get_queryset(self):
+        categoria = self.kwargs['categoria']
+        return Produto.objects.filter(categoria__nome=categoria)
+    

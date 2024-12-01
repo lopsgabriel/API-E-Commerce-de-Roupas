@@ -15,5 +15,11 @@ class Produto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=False, null=False)
     imagem = models.ImageField(upload_to='produtos/', blank=True, null=True)
 
+    # def save(self, *args, **kwargs):
+    #     self.categoria = self.categoria.nome
+    #     super().save(*args, **kwargs)
+
+
     def __str__(self):
         return self.nome
+     
