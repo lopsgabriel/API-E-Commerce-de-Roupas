@@ -3,6 +3,10 @@ import { fetchAuthApi } from "@/components";
 import React from "react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { VscHeart } from "react-icons/vsc";
+import "../../../../app/index.css/"
+import axios from "axios";
+import { VscHeartFilled } from "react-icons/vsc";
 
 interface Produto {
   id: number;
@@ -14,16 +18,27 @@ interface Produto {
   imagem: string;
 }
 
+interface ListaDesejo {
+  usuario: number | null,
+  usuario_nome: string,
+  produto: number,
+  produto_nome: string
+}
+
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [categorias, setCategorias] = useState<string[]>([])
+  const [listaDesejos, setListaDesejos] = useState<ListaDesejo[]>([])
   const navigate = useNavigate()
+  const usuarioId = localStorage.getItem("user_id");
 
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
         const refreshtoken = localStorage.getItem("refresh_token");
         const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/`, refreshtoken, navigate );
+        const listaDesejosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/listaDesejos/`, refreshtoken, navigate );
+        setListaDesejos(listaDesejosData.map((produto: ListaDesejo) => ({ produto: produto.produto })));
         const produtosComCategoria = await Promise.all( produtosData.map(async (produto: Produto) => {
           const catResponse = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produto.categoria}/`, refreshtoken, navigate );
           return {
@@ -31,6 +46,8 @@ const Home: FC = () => {
             categoria: catResponse.nome, 
           };
         }));
+
+
         setCategorias([...new Set(produtosComCategoria.map((produto) => produto.categoria))]);
         setProdutos(produtosComCategoria);
       } catch (error) {
@@ -39,6 +56,21 @@ const Home: FC = () => {
     };
     fetchProdutos();
   }, [navigate]);
+
+  async function addListaDesejos(produtoId: number) {
+    // criar uma função na pasta components depois
+    console.log(produtoId);
+    console.log(usuarioId)
+    const refreshtoken = localStorage.getItem("access_token");
+    const response = await axios.post(`${import.meta.env.VITE_URL}/listaDesejos/`,{ 
+        produto: produtoId,
+        usuario: usuarioId
+        },
+         { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
+        )
+    setListaDesejos((prev) => [...prev, { usuario: Number(usuarioId), usuario_nome: "", produto: produtoId, produto_nome: "" }])
+    console.log(response);
+  }
 
   return (
     <>
@@ -53,19 +85,44 @@ const Home: FC = () => {
                 <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-4 gap-4">
                   {produtos.filter((produto) => produto.categoria === categoria).map((produto) => (
                     <React.Fragment key={produto.id}>
-                      <div className="w-52"> 
-                        <Link to={`produto/${produto.id}`}>
-                          <div className="hover:scale-105 duration-300">
-                            <img src={produto.imagem} className="w-52 h-52 object-cover rounded-t-lg shadow-2xl" />
+                      <div className="w-52 relative">
+                        <div className="relative hover:scale-105 duration-300">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              addListaDesejos(produto.id);
+                            }}
+                            className="absolute right-4 top-4 hover:scale-110 duration-100 text-black icon-heart z-10"
+                          >
+                            {
+                              listaDesejos.some((item) => item.produto === produto.id) ? (
+                                <VscHeartFilled size={20} />
+                              ) : (
+                                <VscHeart size={20} />
+                             )
+                            }
+                          </button>
+                          <Link to={`produto/${produto.id}`}>
+                            <img
+                              src={produto.imagem}
+                              className="w-52 h-52 object-cover rounded-t-lg shadow-2xl"
+                            />
                             <div className="bg-white p-4 rounded-b-lg">
-                              <p className="text-sm font-light text-gray-700 opacity-90 pt-1">{produto.categoria}</p>
-                              <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">{produto.nome}</h1>
+                              <div className="flex justify-between">
+                                <p className="text-sm font-light text-gray-700 opacity-90 pt-1">
+                                  {produto.categoria}
+                                </p>
+                              </div>
+                              <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">
+                                {produto.nome}
+                              </h1>
                               <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
                                 R${produto.preco}
                               </p>
                             </div>
-                          </div>
-                        </Link>
+                          </Link>
+                        </div>
                       </div>
                     </React.Fragment>
                   ))}
