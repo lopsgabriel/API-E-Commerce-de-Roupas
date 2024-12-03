@@ -5,7 +5,7 @@ from .serializers import CategoriaSerializer, ProdutoSerializer
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 class CategoriaViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Categoria.objects.all().order_by('nome')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['nome']

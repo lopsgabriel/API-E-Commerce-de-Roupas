@@ -1,14 +1,14 @@
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serializers import PerfilSerializer, ItemCarrinhoSerializer, ListaCarrinhoSerializer
-from .models import Perfil, Item_carrinho
+from .serializers import PerfilSerializer, ItemCarrinhoSerializer, ListaCarrinhoSerializer, ListaDesejosSerializer
+from .models import Perfil, Item_carrinho, Lista_Desejos
 from rest_framework import viewsets, filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 
 class PerfilViewSet(viewsets.ModelViewSet):
-    authentication_classes = [ BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [ BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
     queryset = Perfil.objects.all().order_by('usuario')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = PerfilSerializer
@@ -16,13 +16,20 @@ class PerfilViewSet(viewsets.ModelViewSet):
 
 #futuramente retirar o itemcarrinhoviewset
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
-    authentication_classes = [ BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [ BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
     queryset = Item_carrinho.objects.all().order_by('produto')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = ItemCarrinhoSerializer
 
-class listaCarrinhoViewSet(generics.ListAPIView):
+class ListaDesejosViewSet(viewsets.ModelViewSet):
+    # authentication_classes = [ BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
+    queryset = Lista_Desejos.objects.all().order_by('produto')
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    serializer_class = ListaDesejosSerializer
+
+class ListaCarrinhoViewSet(generics.ListAPIView):
     serializer_class = ListaCarrinhoSerializer
     
     def get_queryset(self):
@@ -36,3 +43,4 @@ class listaCarrinhoViewSet(generics.ListAPIView):
         except Perfil.DoesNotExist:
             #Se o perfil não for encontrado, retorna uma queryset vazia
             return Item_carrinho.objects.none()
+        
