@@ -30,15 +30,17 @@ const Home: FC = () => {
   const [categorias, setCategorias] = useState<string[]>([])
   const [listaDesejos, setListaDesejos] = useState<ListaDesejo[]>([])
   const navigate = useNavigate()
-  const usuarioId = localStorage.getItem("user_id");
+  const user_id = localStorage.getItem("user_id");
 
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
         const refreshtoken = localStorage.getItem("refresh_token");
         const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/`, refreshtoken, navigate );
-        const listaDesejosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/listaDesejos/`, refreshtoken, navigate );
+
+        const listaDesejosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/listaDesejos/${user_id}`, refreshtoken, navigate );
         setListaDesejos(listaDesejosData.map((produto: ListaDesejo) => ({ produto: produto.produto })));
+
         const produtosComCategoria = await Promise.all( produtosData.map(async (produto: Produto) => {
           const catResponse = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produto.categoria}/`, refreshtoken, navigate );
           return {
@@ -55,22 +57,37 @@ const Home: FC = () => {
       }
     };
     fetchProdutos();
-  }, [navigate]);
+  }, [navigate, user_id]);
 
-  async function addListaDesejos(produtoId: number) {
-    // criar uma função na pasta components depois
-    console.log(produtoId);
-    console.log(usuarioId)
-    const refreshtoken = localStorage.getItem("access_token");
-    const response = await axios.post(`${import.meta.env.VITE_URL}/listaDesejos/`,{ 
-        produto: produtoId,
-        usuario: usuarioId
-        },
-         { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
-        )
-    setListaDesejos((prev) => [...prev, { usuario: Number(usuarioId), usuario_nome: "", produto: produtoId, produto_nome: "" }])
-    console.log(response);
+  async function toggleWishlist(produtoId: number) {
+    try {
+      const refreshtoken = localStorage.getItem("access_token");
+  
+      // Verificar se o produto ta na lista de desejos
+      const isInListaDesejos = listaDesejos.some(item => item.produto === produtoId);
+  
+      if (isInListaDesejos) {
+        // Remover da lista de desejos
+        await axios.delete(`${import.meta.env.VITE_URL}/listaDesejos/${user_id}/${produtoId}/`, {
+          headers: { 'Authorization': `Bearer ${refreshtoken}` }
+        });
+        setListaDesejos((prev) => prev.filter(item => item.produto !== produtoId));
+      } else {
+        await axios.post(
+          `${import.meta.env.VITE_URL}/listaDesejos/${user_id}/`,
+          {
+            produto: produtoId,
+            usuario: user_id,
+          },
+          { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
+        );
+        setListaDesejos((prev) => [...prev, { usuario: Number(user_id), usuario_nome: "", produto: produtoId, produto_nome: "" }])
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar a lista de desejos", error);
+    }
   }
+  
 
   return (
     <>
@@ -91,7 +108,7 @@ const Home: FC = () => {
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
-                              addListaDesejos(produto.id);
+                              toggleWishlist(produto.id);
                             }}
                             className="absolute right-4 top-4 hover:scale-110 duration-100 text-black icon-heart z-10"
                           >
