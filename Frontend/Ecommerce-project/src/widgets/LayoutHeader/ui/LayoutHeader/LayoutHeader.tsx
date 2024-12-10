@@ -15,7 +15,6 @@ const LayoutHeader: FC = () => {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
-      navigate("/")
     }
   }, [navigate])
   return (

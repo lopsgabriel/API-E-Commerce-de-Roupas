@@ -6,5 +6,6 @@ import { Login } from "./Login";
 import { Logout } from "./Logout";
 import { Cart } from "./Cart"
 import { Categoria } from "./Categoria";
+import { SignUp } from "./SignUp";
 
-export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria };
+export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp };
