@@ -1,11 +1,11 @@
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from .serializers import PerfilSerializer, ItemCarrinhoSerializer, ListaCarrinhoSerializer, ListaDesejosSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import PerfilSerializer, ItemCarrinhoSerializer, ListaCarrinhoSerializer, ListaDesejosSerializer, UserSerializer
 from .models import Perfil, Item_carrinho, Lista_Desejos
 from rest_framework import viewsets, filters, generics, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-
+from django.contrib.auth.models import User
 
 class PerfilViewSet(viewsets.ModelViewSet):
     # authentication_classes = [ BasicAuthentication]
@@ -105,3 +105,7 @@ class ListaCarrinhoViewSet(generics.ListAPIView):
             #Se o perfil não for encontrado, retorna uma queryset vazia
             return Item_carrinho.objects.none()
         
+class UserCreateView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]

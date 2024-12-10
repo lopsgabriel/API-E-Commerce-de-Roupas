@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Perfil, Item_carrinho, Lista_Desejos
 from roupas.models import Produto
+from django.contrib.auth.models import User
 
 
 class ItemCarrinhoSerializer(serializers.ModelSerializer):
@@ -42,4 +43,14 @@ class ListaCarrinhoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item_carrinho
         fields = ['id', 'produto', 'preco', 'quantidade']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
