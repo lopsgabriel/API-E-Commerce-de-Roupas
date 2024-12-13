@@ -25,6 +25,70 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
     search_fields = ['produto__nome']
     serializer_class = ItemCarrinhoSerializer
 
+    def list(self, request, usuario=None):
+        try:
+            # Busca o perfil pelo ID (usuario é o ID do perfil na URL)
+            perfil = Perfil.objects.get(id=usuario)  
+
+            # Retorna todos os itens de carrinho associados a esse perfil
+            itens_carrinho = Item_carrinho.objects.filter(perfil_carrinho=perfil)
+            serializer = ItemCarrinhoSerializer(itens_carrinho, many=True)
+
+            return Response(serializer.data)
+
+        except Perfil.DoesNotExist:
+            return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+    def retrieve(self, request, usuario=None, item_id=None):
+        try:
+            perfil = Perfil.objects.get(id=usuario)  
+
+            # Pega o item  com base no perfil e no ID do item
+            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            serializer = ItemCarrinhoSerializer(item_carrinho)
+
+            return Response(serializer.data)
+
+        except Perfil.DoesNotExist:
+            return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Item_carrinho.DoesNotExist:
+            return Response({"detail": "Item de carrinho não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+
+    def destroy(self, request, usuario=None, item_id=None):
+        try:
+            # Busca o perfil pelo ID (usuario é o ID do perfil na URL)
+            perfil = Perfil.objects.get(id=usuario)  
+
+            # Pega o item  com base no perfil e no ID do item    
+            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            item_carrinho.delete()
+
+            return Response({"detail": "Item de carrinho excluído com sucesso."}, status=status.HTTP_204_NO_CONTENT)
+
+        except Perfil.DoesNotExist:
+            return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Item_carrinho.DoesNotExist:
+            return Response({"detail": "Item de carrinho não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    def create(self, request, usuario=None):
+        try:
+            # Busca o perfil pelo ID (usuario é o ID do perfil na URL)
+            perfil = Perfil.objects.get(id=usuario)  
+
+            # Cria o novo item no carrinho com os dados enviados    
+            serializer = ItemCarrinhoSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(perfil_carrinho=perfil)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Perfil.DoesNotExist:
+            return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
 
 class ListaDesejosViewSet(viewsets.ViewSet):
 
