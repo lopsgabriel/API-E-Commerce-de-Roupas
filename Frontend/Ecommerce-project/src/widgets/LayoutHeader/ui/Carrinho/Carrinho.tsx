@@ -5,13 +5,25 @@ import { TbShoppingCart } from "react-icons/tb";
 
 interface ProdutosCarrinho {
   id: number;
-  produto: string;
-  preco: number;
+  perfil_carrinho: number;
+  usuario_nome: string;
+  produto: number;
+  produto_nome: string;
   quantidade: number;
 }
 
+interface Carrinho {
+  id: number;
+  nome: string;
+  descricao: string;
+  preco: string;
+  estoque: number;
+  categoria: string;
+  imagem: string;
+}
+
 const Carrinho: FC = () => {
-  const [produtos_carrinho, setProdutos_carrinho] = useState<ProdutosCarrinho[]>([]);
+  const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,14 +31,21 @@ const Carrinho: FC = () => {
       try {
         const userId = localStorage.getItem("user_id");
         const refreshtoken = localStorage.getItem("refresh_token");
-        const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/perfil/${userId}`, refreshtoken, navigate);
-        setProdutos_carrinho(produtosData);
+        const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate);
+
+        const listaProdutos = await Promise.all(
+          produtosData.map(async (carrinho: ProdutosCarrinho) => {
+            const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate)
+            return produto
+          })
+        ) 
+        setProdutos_carrinho(listaProdutos);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
       }
     };
     fetchProdutosCarrinho();
-  }, [navigate]);
+  }, [navigate, ]);
 
   return (
     <>
@@ -50,21 +69,19 @@ const Carrinho: FC = () => {
                   <div className="flex items-center space-x-4">
                     <div className="avatar">
                       <div className="mask mask-squircle w-12 h-12">
-                        <img src="/logo-White.svg" alt="Avatar Tailwind CSS Component" />
+                        <img src={carrinho.imagem} alt="Avatar Tailwind CSS Component" />
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold">{carrinho.produto}</div>
+                      <div className="font-bold">{carrinho.nome}</div>
                       <div className="text-sm opacity-50">Preço: R${carrinho.preco}</div>
-                      <div className="text-sm opacity-50">Quantidade: {carrinho.quantidade}</div>
                     </div>
                   </div>
-                  <div className="divider"></div>
                 </li>
               ))
             )}
             <div className="divider" />
-            <div className="flex items-center space-x-4 pb-4 justify-center">
+            {/* <div className="flex items-center space-x-4 pb-4 justify-center">
               <div>
                 <div className="font-bold">Total:</div>
                 <div className="text-sm opacity-50">
@@ -74,7 +91,7 @@ const Carrinho: FC = () => {
                   Itens: {produtos_carrinho.reduce((total, carrinho) => total + carrinho.quantidade, 0)}
                 </div>
               </div>
-            </div>
+            </div> */}
             <a href="/cart" className="flex justify-center items-center btn btn-primary">
               Ver Carrinho
             </a>
