@@ -20,6 +20,7 @@ interface Carrinho {
   estoque: number;
   categoria: string;
   imagem: string;
+  quantidade: number;
 }
 
 const Carrinho: FC = () => {
@@ -35,7 +36,8 @@ const Carrinho: FC = () => {
 
         const listaProdutos = await Promise.all(
           produtosData.map(async (carrinho: ProdutosCarrinho) => {
-            const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate)
+            const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate);
+            produto.quantidade = carrinho.quantidade;
             return produto
           })
         ) 
@@ -64,34 +66,26 @@ const Carrinho: FC = () => {
               </li>
             ) : (
               produtos_carrinho.map((carrinho) => (
-                <li key={carrinho.id}>
+                <li key={carrinho.id} >
                   <div className="divider"></div>
-                  <div className="flex items-center space-x-4">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <img src={carrinho.imagem} alt="Avatar Tailwind CSS Component" />
+                  <a href={`/dashboard/produto/${carrinho.id}`}>
+                    <div className="flex items-center space-x-4">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <img src={carrinho.imagem} alt="Avatar Tailwind CSS Component" />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{carrinho.nome}</div>
+                        <div className="text-sm opacity-50">Preço: R${carrinho.preco}</div>
+                        <div className="text-sm opacity-50">Quantidade: {carrinho.quantidade}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{carrinho.nome}</div>
-                      <div className="text-sm opacity-50">Preço: R${carrinho.preco}</div>
-                    </div>
-                  </div>
+                  </a>
                 </li>
               ))
             )}
             <div className="divider" />
-            {/* <div className="flex items-center space-x-4 pb-4 justify-center">
-              <div>
-                <div className="font-bold">Total:</div>
-                <div className="text-sm opacity-50">
-                  Preço: R${produtos_carrinho.reduce((total, carrinho) => total + carrinho.preco * carrinho.quantidade, 0)}
-                </div>
-                <div className="text-sm opacity-50">
-                  Itens: {produtos_carrinho.reduce((total, carrinho) => total + carrinho.quantidade, 0)}
-                </div>
-              </div>
-            </div> */}
             <a href="/cart" className="flex justify-center items-center btn btn-primary">
               Ver Carrinho
             </a>

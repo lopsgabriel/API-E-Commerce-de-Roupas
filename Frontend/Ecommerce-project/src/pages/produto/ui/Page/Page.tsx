@@ -56,11 +56,10 @@ const Produto: FC = () => {
 
                 {/* Coluna direita */}
                 <div className="flex-col ml-4">
-                {/* Coloque aqui o conteúdo da segunda coluna */}
                 <h1 className="text-2xl font-bold">{produto.nome}</h1>
-                <p>{produto.descricao}</p>
+                <p className='max-w-md text-justify' >{produto.descricao}</p>
                 <h1>{produto.categoria}</h1>
-                <h1>{produto.preco}</h1>
+                <h1 className="text-2xl font-bold"> {produto.preco}</h1>
 
 
                 </div>

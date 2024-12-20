@@ -4,28 +4,46 @@ import { FC, useEffect, useState } from "react";
 
 interface ProdutosCarrinho {
   id: number;
-  produto: string;
-  preco: number;
+  perfil_carrinho: number;
+  usuario_nome: string;
+  produto: number;
+  produto_nome: string;
+  quantidade: number;
+}
+
+interface Carrinho {
+  id: number;
+  nome: string;
+  descricao: string;
+  preco: string;
+  estoque: number;
+  categoria: string;
+  imagem: string;
   quantidade: number;
 }
 
 const Cart: FC = () => {
-    const [produtos_carrinho, setProdutos_carrinho] = useState<ProdutosCarrinho[]>([]);
+    const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
     const navigate = useNavigate()
     useEffect(() => {
       const fetchProdutosCarrinho = async () => {
         try {
           const userId = localStorage.getItem("user_id");
           const refreshtoken = localStorage.getItem("refresh_token");
-          const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/perfil/${userId}`, refreshtoken, navigate);
-          console.log(produtosData);
-          setProdutos_carrinho(produtosData);
+          const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate);
+  
+          const listaProdutos = await Promise.all(
+            produtosData.map(async (carrinho: ProdutosCarrinho) => {
+              const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate);
+              produto.quantidade = carrinho.quantidade;
+              return produto
+            })
+          ) 
+          setProdutos_carrinho(listaProdutos);
         } catch (error) {
           console.error("Erro ao buscar produtos:", error);
         }
-  
-  
-        }
+      };
       fetchProdutosCarrinho();
     }, [navigate]);
     
@@ -47,18 +65,18 @@ const Cart: FC = () => {
                   </li>
                 ) : (
                   produtos_carrinho.map((carrinho) => (
-                    <div key={carrinho.id} className="grid grid-cols-4 w-full max-w-5xl items-center">
+                    <div key={carrinho.id} className="grid grid-cols-4 w-full max-w-5xl py-2 items-center">
                       <div className="flex items-center">
                         <div className="avatar">
-                            <div className="mask mask-squircle w-12 h-12">
-                                <img src="/logo-White.svg" alt="Avatar Tailwind CSS Component" />
-                            </div>
+                          <div className="mask mask-squircle w-12 h-12">
+                            <img src={carrinho.imagem} alt="Avatar Tailwind CSS Component" />
+                          </div>
                         </div>
-                        <p className="truncate ml-2">{carrinho.produto}</p>
+                        <p className="truncate ml-2">{carrinho.nome}</p>
                       </div>
                           <div className="text-base font-thin text-center"> {carrinho.quantidade}</div>
                           <div className="text-base font-thin text-center"> R${carrinho.preco}</div>
-                          <div className="text-base font-semibold text-center"> R${carrinho.preco * carrinho.quantidade}</div>
+                          <div className="text-base font-semibold text-center"> R${parseFloat(carrinho.preco) * carrinho.quantidade}</div>
                     </div>
                   ))
                 )}
@@ -68,7 +86,7 @@ const Cart: FC = () => {
                     <p className="font-bold">Resumo:</p>
                     <div className="flex justify-between py-1 " style={{ borderBottom: '1px solid #C8C8C810' }}>
                       <p className="text-base font-thin">Valor dos produtos: </p> 
-                      <p className="text-base font-thin">R${produtos_carrinho.reduce((total, carrinho) => total + carrinho.preco * carrinho.quantidade, 0)}</p>
+                      <p className="text-base font-thin">R${produtos_carrinho.reduce((total, carrinho) => total + parseFloat(carrinho.preco) * carrinho.quantidade, 0)}</p>
                     </div>
                     <div className="flex justify-between py-1 " style={{ borderBottom: '1px solid #C8C8C810' }}>
                       <p className="text-base font-thin">Frete:</p>
