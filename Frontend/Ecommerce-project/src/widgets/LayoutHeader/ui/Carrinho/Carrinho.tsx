@@ -65,20 +65,20 @@ const Carrinho: FC = () => {
                 <p>Seu carrinho está vazio</p>
               </li>
             ) : (
-              produtos_carrinho.map((carrinho) => (
-                <li key={carrinho.id} >
+              produtos_carrinho.map((produto) => (
+                <li key={produto.id} >
                   <div className="divider"></div>
-                  <a href={`/dashboard/produto/${carrinho.id}`}>
+                  <a href={`/dashboard/produto/${produto.id}`}>
                     <div className="flex items-center space-x-4">
                       <div className="avatar">
                         <div className="mask mask-squircle w-12 h-12">
-                          <img src={carrinho.imagem} alt="Avatar Tailwind CSS Component" />
+                          <img src={produto.imagem} alt="Avatar Tailwind CSS Component" />
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{carrinho.nome}</div>
-                        <div className="text-sm opacity-50">Preço: R${carrinho.preco}</div>
-                        <div className="text-sm opacity-50">Quantidade: {carrinho.quantidade}</div>
+                        <div className="font-bold">{produto.nome}</div>
+                        <div className="text-sm opacity-50">Preço: R${Number(produto.preco) * produto.quantidade}</div>
+                        <div className="text-sm opacity-50">Quantidade: {produto.quantidade}</div>
                       </div>
                     </div>
                   </a>

@@ -7,6 +7,7 @@ import { VscHeart } from "react-icons/vsc";
 import "../../../../app/index.css/"
 import axios from "axios";
 import { VscHeartFilled } from "react-icons/vsc";
+import { TbShoppingCartCopy, TbShoppingCartPlus } from "react-icons/tb";
 
 interface Produto {
   id: number;
@@ -25,10 +26,17 @@ interface ListaDesejo {
   produto_nome: string
 }
 
+interface ProdutosCarrinho {
+  perfil_carrinho: number;
+  produto: number;
+  quantidade: number;
+}
+
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [categorias, setCategorias] = useState<string[]>([])
   const [listaDesejos, setListaDesejos] = useState<ListaDesejo[]>([])
+  const [listaCarrinho, setListaCarrinho] = useState<ProdutosCarrinho[]>([])
   const navigate = useNavigate()
   const user_id = localStorage.getItem("user_id");
 
@@ -38,6 +46,8 @@ const Home: FC = () => {
         const refreshtoken = localStorage.getItem("refresh_token");
         const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/`, refreshtoken, navigate );
 
+        const listaCarrinhoData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${user_id}/`, refreshtoken, navigate );
+        setListaCarrinho(listaCarrinhoData.map((produto: ProdutosCarrinho) => ({ produto: produto.produto })));
         const listaDesejosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/listaDesejos/${user_id}`, refreshtoken, navigate );
         setListaDesejos(listaDesejosData.map((produto: ListaDesejo) => ({ produto: produto.produto })));
 
@@ -59,32 +69,72 @@ const Home: FC = () => {
     fetchProdutos();
   }, [navigate, user_id]);
 
-  async function toggleWishlist(produtoId: number) {
+
+  async function togglelist(produtoId: number, listType: "carrinhos" | "listaDesejos") {
+
+    const listas: Record<string, { produto: number }[]> = {
+      carrinhos: listaCarrinho.map((item) => ({ produto: item.produto })),
+      listaDesejos: listaDesejos.map((item) => ({ produto: item.produto }))
+    };
+
+    const setListas = {
+      carrinhos: setListaCarrinho,
+      listaDesejos: setListaDesejos
+    };
+
     try {
       const refreshtoken = localStorage.getItem("access_token");
   
-      // Verificar se o produto ta na lista de desejos
-      const isInListaDesejos = listaDesejos.some(item => item.produto === produtoId);
+      // Verificar se o produto ta na lista 
+      const lista = listas[listType];
+      const isInLista = lista.some(item => item.produto === produtoId);
   
-      if (isInListaDesejos) {
-        // Remover da lista de desejos
-        await axios.delete(`${import.meta.env.VITE_URL}/listaDesejos/${user_id}/${produtoId}/`, {
+      if (isInLista) {
+        // Remover da lista 
+        await axios.delete(`${import.meta.env.VITE_URL}/${listType}/${user_id}/${produtoId}/`, {
           headers: { 'Authorization': `Bearer ${refreshtoken}` }
         });
-        setListaDesejos((prev) => prev.filter(item => item.produto !== produtoId));
+        if (listType === "carrinhos") {
+          setListas[listType]((prev: ProdutosCarrinho[]) => prev.filter(item => item.produto !== produtoId));
+        } else {
+          setListas[listType]((prev: ListaDesejo[]) => prev.filter(item => item.produto !== produtoId));
+        }
       } else {
-        await axios.post(
-          `${import.meta.env.VITE_URL}/listaDesejos/${user_id}/`,
-          {
-            produto: produtoId,
-            usuario: user_id,
-          },
-          { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
-        );
-        setListaDesejos((prev) => [...prev, { usuario: Number(user_id), usuario_nome: "", produto: produtoId, produto_nome: "" }])
-      }
+        if (listType === "carrinhos") {
+          await axios.post(
+            `${import.meta.env.VITE_URL}${listType}/${user_id}/`,
+            {
+              'perfil_carrinho': user_id,
+              'produto': produtoId,
+              'quantidade': 1
+            },
+            { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
+          );
+          setListas[listType]((prev: ProdutosCarrinho[]) => [...prev, { 
+            'perfil_carrinho': Number(user_id), 
+            'produto': produtoId, 
+            'quantidade': 1
+          }]);
+          console.log(setListas)
+        } else {
+          await axios.post(
+            `${import.meta.env.VITE_URL}${listType}/${user_id}/`,
+            {
+              'usuario': user_id,
+              'produto': produtoId
+            },
+            {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${refreshtoken}`
+            }
+            }
+          )
+          setListas[listType]((prev: ListaDesejo[]) => [...prev, { usuario: Number(user_id), usuario_nome: "", produto: produtoId, produto_nome: "" }]);
+        }
+        }
     } catch (error) {
-      console.error("Erro ao atualizar a lista de desejos", error);
+      console.error("Erro ao atualizar a lista ", error);
     }
   }
   
@@ -108,7 +158,7 @@ const Home: FC = () => {
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
-                              toggleWishlist(produto.id);
+                              togglelist(produto.id, "listaDesejos");
                             }}
                             className="absolute right-4 top-4 hover:scale-110 duration-100 text-black icon-heart z-10"
                           >
@@ -134,9 +184,28 @@ const Home: FC = () => {
                               <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">
                                 {produto.nome}
                               </h1>
-                              <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
-                                R${produto.preco}
-                              </p>
+                              <div className="flex justify-between ">
+                                <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
+                                  R${produto.preco}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    togglelist(produto.id, "carrinhos");
+                                  }}
+                                  className="px-3  text-lg font-light text-gray-800 rounded-xl inline-block border-2 border-gray-950 hover:scale-110 absolute right-5 duration-100 z-10"
+                                >
+                                  {
+                                    listaCarrinho.some((item) => item.produto === produto.id) ? (
+                                      <TbShoppingCartCopy size={18} />
+                                    ) : (
+                                      <TbShoppingCartPlus size={18} />
+                                    )
+                                  }
+                                </button>
+                              </div>
                             </div>
                           </Link>
                         </div>
