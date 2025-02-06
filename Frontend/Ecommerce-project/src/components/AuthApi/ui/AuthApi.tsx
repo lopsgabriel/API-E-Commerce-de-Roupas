@@ -16,7 +16,7 @@ const fetchAuthApi = async (url: string, refreshtoken: string | null, navigate: 
       },
     });
     return response.data;
-} catch (error: unknown) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401 && refreshtoken) {
         try{

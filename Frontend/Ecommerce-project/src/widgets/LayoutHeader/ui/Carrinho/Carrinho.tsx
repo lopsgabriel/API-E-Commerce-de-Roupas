@@ -1,4 +1,4 @@
-import { fetchAuthApi } from "@/components";
+import { fetchAuthApi, CartUpdate } from "@/components";
 import { useNavigate } from "react-router-dom";
 import { FC, useEffect, useState } from "react";
 import { TbShoppingCart } from "react-icons/tb";
@@ -24,6 +24,7 @@ interface Carrinho {
 }
 
 const Carrinho: FC = () => {
+  const { produtosCarrinho, atualizarCarrinho } = CartUpdate();
   const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
   const navigate = useNavigate();
 
@@ -49,11 +50,16 @@ const Carrinho: FC = () => {
     fetchProdutosCarrinho();
   }, [navigate, ]);
 
+  function atualizar_Carrinho() {
+    atualizarCarrinho();
+    setProdutos_carrinho(produtosCarrinho);
+  }
+
   return (
     <>
       <div className="navbar-start">
         <div className="dropdown">
-          <label tabIndex={0} className="btn-ghost btn-circle btn">
+          <label tabIndex={0} className="btn-ghost btn-circle btn" onClick={atualizar_Carrinho}>
             <TbShoppingCart />
           </label>
           <ul
@@ -61,10 +67,12 @@ const Carrinho: FC = () => {
             className="dropdown-content menu rounded-box menu-sm right-0 mt-3 w-80 bg-base-100 p-2 shadow z-10"
           >
             {produtos_carrinho.length === 0 ? (
+              atualizarCarrinho(),
               <li>
                 <p>Seu carrinho está vazio</p>
               </li>
             ) : (
+              // chamar função atualizar carrinho
               produtos_carrinho.map((produto) => (
                 <li key={produto.id} >
                   <div className="divider"></div>
