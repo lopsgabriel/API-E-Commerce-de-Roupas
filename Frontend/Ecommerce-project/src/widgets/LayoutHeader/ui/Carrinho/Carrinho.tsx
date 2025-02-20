@@ -24,7 +24,7 @@ interface Carrinho {
 }
 
 const Carrinho: FC = () => {
-  const { produtosCarrinho, atualizarCarrinho } = CartUpdate();
+  const { atualizarCarrinho } = CartUpdate(); 
   const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
   const navigate = useNavigate();
 
@@ -50,9 +50,9 @@ const Carrinho: FC = () => {
     fetchProdutosCarrinho();
   }, [navigate, ]);
 
-  function atualizar_Carrinho() {
-    atualizarCarrinho();
-    setProdutos_carrinho(produtosCarrinho);
+  async function atualizar_Carrinho() {
+    const produtosAtualizados = await atualizarCarrinho(); // Obtém os produtos atualizados
+    setProdutos_carrinho(produtosAtualizados); // Atualiza o estado local diretamente
   }
 
   return (
@@ -67,7 +67,6 @@ const Carrinho: FC = () => {
             className="dropdown-content menu rounded-box menu-sm right-0 mt-3 w-80 bg-base-100 p-2 shadow z-10"
           >
             {produtos_carrinho.length === 0 ? (
-              atualizarCarrinho(),
               <li>
                 <p>Seu carrinho está vazio</p>
               </li>

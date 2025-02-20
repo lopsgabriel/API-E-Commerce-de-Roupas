@@ -6,7 +6,7 @@
 
 import { fetchAuthApi } from "@/components";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+// import { useState } from "react";
 
 interface ProdutosCarrinho {
   id: number;
@@ -29,10 +29,9 @@ interface Carrinho {
 }
 
 const CartUpdate = () => {
-  const [produtosCarrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
   const navigate = useNavigate();
 
-  const atualizarCarrinho = async () => {
+  const atualizarCarrinho = async (): Promise<Carrinho[]> => {
     try {
       const userId = localStorage.getItem("user_id");
       const refreshtoken = localStorage.getItem("refresh_token");
@@ -45,16 +44,15 @@ const CartUpdate = () => {
           return produto;
         })
       );
-      setProdutos_carrinho(listaProdutos); // Atualiza a lista de produtos no carrinho
+      return listaProdutos; // Retorna os produtos SEM atualizar um estado interno
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
+      return [];
     }
   };
 
-  return {
-    produtosCarrinho,
-    atualizarCarrinho,
-  };
+  return { atualizarCarrinho };
 };
 
 export default CartUpdate;
+
