@@ -68,7 +68,7 @@ const Carrinho: FC = () => {
           >
             {produtos_carrinho.length === 0 ? (
               <li>
-                <p>Seu carrinho está vazio</p>
+                <p className="text-center justify-center">Seu carrinho está vazio</p>
               </li>
             ) : (
               // chamar função atualizar carrinho

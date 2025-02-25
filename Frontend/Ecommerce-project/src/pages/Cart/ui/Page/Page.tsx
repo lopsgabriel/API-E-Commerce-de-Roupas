@@ -60,9 +60,7 @@ const Cart: FC = () => {
                   <p className="font-medium text-center">Valor Total</p>
                 </div>
                 {produtos_carrinho.length === 0 ? (
-                  <li>
                   <p>Seu carrinho esta vazio </p>
-                  </li>
                 ) : (
                   produtos_carrinho.map((carrinho) => (
                     <div key={carrinho.id} className="grid grid-cols-4 w-full max-w-5xl py-2 items-center">
