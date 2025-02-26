@@ -35,9 +35,13 @@ const Favoritos: FC = () => {
         const listaProdutos = await Promise.all(
           produtosData.map(async (carrinho: ProdutosWishlist) => {
             const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate);
-            return produto
+            const catResponse = await fetchAuthApi(`${import.meta.env.VITE_URL}/categorias/${produto.categoria}/`, refreshtoken, navigate );
+            return {
+              ...produto,
+              categoria: catResponse.nome, 
+            };
           })
-        ) 
+        )
         setProdutos_wishlist(listaProdutos);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
