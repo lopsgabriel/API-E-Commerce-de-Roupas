@@ -1,5 +1,6 @@
 import { FC, useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface Produto {
   nome: string
@@ -21,6 +22,7 @@ interface Categoria {
 }
 
 const Adicionar: FC = () => {
+  const navigate = useNavigate()
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [produto, setProduto] = useState<Produto>({
     nome: "",
@@ -59,6 +61,9 @@ const Adicionar: FC = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       console.log(response.data)
+      // quero que seja redirecionado para pagina principal depois que o produto for criado
+      navigate('/')
+
     } catch (error ) {
       if (error instanceof AxiosError) {
         console.error("Erro na resposta:", error.response?.data)
@@ -89,7 +94,6 @@ const Adicionar: FC = () => {
     try {
       if (produto.foto) {
         await CriarProduto(produto)
-        console.log('Produto criado com sucesso')
       }
       
     } catch (error) {

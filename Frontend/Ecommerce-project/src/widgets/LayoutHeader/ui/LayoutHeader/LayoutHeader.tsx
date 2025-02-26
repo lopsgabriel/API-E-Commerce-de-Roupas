@@ -57,6 +57,7 @@ const LayoutHeader: FC = () => {
                   <User
                     links={[
                       { name: "Adicionar Produto", href: "/adicionar" },
+                      { name: "Favoritos", href: "/favoritos" },
                       { name: "Logout", href: "/logout" },
                     ]}
                   />
