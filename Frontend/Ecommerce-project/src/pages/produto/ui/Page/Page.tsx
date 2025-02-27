@@ -51,17 +51,16 @@ const Produto: FC = () => {
             <div className="grid grid-cols-2 gap-4 items-center justify-center h-full px-4">
                 {/* Coluna esquerda */}
                 <div className="flex justify-center items-center">
-                <img src={produto.imagem} className="w-64 h-64 object-cover rounded-lg shadow-2xl"></img>
+                  <img src={produto.imagem} className="w-64 h-64 object-cover rounded-lg shadow-2xl"></img>
                 </div>
 
                 {/* Coluna direita */}
                 <div className="flex-col ml-4">
-                <h1 className="text-2xl font-bold">{produto.nome}</h1>
-                <p className='max-w-md text-justify' >{produto.descricao}</p>
-                <h1>{produto.categoria}</h1>
-                <h1 className="text-2xl font-bold"> {produto.preco}</h1>
-
-
+                  <h1 className="text-2xl font-bold">{produto.nome}</h1>
+                  <p className='max-w-md text-justify' >{produto.descricao}</p>
+                  <h1>{produto.categoria}</h1>
+                  <h1 className="text-2xl font-bold"> {produto.preco}</h1>
+                  <button className="btn btn-primary my-2">Comprar</button>
                 </div>
             </div>
         </div>

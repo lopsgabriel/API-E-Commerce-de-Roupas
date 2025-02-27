@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { fetchAuthApi } from "@/components";
 import React from "react";
-import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -51,18 +50,18 @@ const Categoria: FC = () => {
                 {produtos.map((produto) => (
                 <React.Fragment key={produto.id}>
                     <div className="w-52"> 
-                    <Link to={`produto/${produto.id}`}>
-                        <div className="hover:scale-105 duration-300">
-                          <img src={produto.imagem} className="w-52 h-52 object-cover rounded-t-lg shadow-2xl" />
-                          <div className="bg-white p-4 rounded-b-lg">
-                              <p className="text-sm font-light text-gray-700 opacity-90 pt-1">{produto.categoria}</p>
-                              <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">{produto.nome}</h1>
-                              <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
-                              R${produto.preco}
-                              </p>
-                          </div>
+                    <a href={`../produto/${produto.id}`}>
+                      <div className="hover:scale-105 duration-300">
+                        <img src={produto.imagem} className="w-52 h-52 object-cover rounded-t-lg shadow-2xl" />
+                        <div className="bg-white p-4 rounded-b-lg">
+                            <p className="text-sm font-light text-gray-700 opacity-90 pt-1">{produto.categoria}</p>
+                            <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">{produto.nome}</h1>
+                            <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
+                            R${produto.preco}
+                            </p>
                         </div>
-                    </Link>
+                      </div>
+                    </a>
                     </div>
                 </React.Fragment>
                 ))}

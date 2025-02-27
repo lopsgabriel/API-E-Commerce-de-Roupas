@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { fetchAuthApi } from "@/components";
 import React from "react";
-import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { VscHeart } from "react-icons/vsc";
 import "../../../../app/index.css/"
@@ -170,7 +169,7 @@ const Home: FC = () => {
                              )
                             }
                           </button>
-                          <Link to={`produto/${produto.id}`}>
+                          <a href={`produto/${produto.id}`}>
                             <img
                               src={produto.imagem}
                               className="w-52 h-52 object-cover rounded-t-lg shadow-2xl"
@@ -207,7 +206,7 @@ const Home: FC = () => {
                                 </button>
                               </div>
                             </div>
-                          </Link>
+                          </a>
                         </div>
                       </div>
                     </React.Fragment>

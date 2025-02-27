@@ -25,7 +25,7 @@ const App: FC = () => {
           }
         />
 
-        <Route path="/dashboard/produto/:id_produto" element={
+        <Route path="produto/:id_produto" element={
             <PrivateRoute>
               <Produto />
             </PrivateRoute>

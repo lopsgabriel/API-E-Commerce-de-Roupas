@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { fetchAuthApi } from "@/components";
 import React from "react";
-import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 interface ProdutosWishlist {
@@ -60,7 +59,7 @@ const Favoritos: FC = () => {
                 {produtos_wishlist.map((produto) => (
                 <React.Fragment key={produto.id}>
                     <div className="w-52"> 
-                    <Link to={`produto/${produto.id}`}>
+                    <a href={`produto/${produto.id}`}>
                         <div className="hover:scale-105 duration-300">
                           <img src={produto.imagem} className="w-52 h-52 object-cover rounded-t-lg shadow-2xl" />
                           <div className="bg-white p-4 rounded-b-lg">
@@ -71,7 +70,7 @@ const Favoritos: FC = () => {
                               </p>
                           </div>
                         </div>
-                    </Link>
+                      </a>
                     </div>
                 </React.Fragment>
                 ))}
