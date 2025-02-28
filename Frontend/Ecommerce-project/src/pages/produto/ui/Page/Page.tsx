@@ -55,6 +55,11 @@ const Produto: FC = () => {
   }, [id_produto, navigate, user_id, ])
 
 
+  async function atualizarCarrinho() {
+    const refresh_token = localStorage.getItem('access_token')
+    const carrinhoData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${user_id}/`, refresh_token, navigate);
+    setListaCarrinho(carrinhoData);
+  }
 
   const handleComprar = async () => {
     console.log(`${user_id} ${id_produto} ${quantidade}`)
@@ -84,6 +89,7 @@ const Produto: FC = () => {
     );
     console.log('Produto adicionado ao carrinho!')
     }
+    atualizarCarrinho()
     // navigate('/compras')
   }
 

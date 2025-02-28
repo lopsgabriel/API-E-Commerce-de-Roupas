@@ -1,6 +1,8 @@
 import { fetchAuthApi } from "@/components";
 import { useNavigate } from "react-router-dom";
 import { FC, useEffect, useState } from "react";
+import { TbTrashFilled } from "react-icons/tb";
+import axios from "axios";
 
 interface ProdutosCarrinho {
   id: number;
@@ -25,6 +27,7 @@ interface Carrinho {
 const Cart: FC = () => {
     const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
     const navigate = useNavigate()
+    const user_id = localStorage.getItem("user_id");
     useEffect(() => {
       const fetchProdutosCarrinho = async () => {
         try {
@@ -46,6 +49,20 @@ const Cart: FC = () => {
       };
       fetchProdutosCarrinho();
     }, [navigate]);
+
+    // const atualizarCarrinho = async () => {
+    //   const userId = localStorage.getItem("user_id");
+    //   const refreshtoken = localStorage.getItem("refresh_token");
+    //   const carrinhoData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate);
+    //   setProdutos_carrinho(carrinhoData);
+    // };
+    
+    const deleteProduct = async (id: number) => {
+      const refresh_token = localStorage.getItem('access_token')
+      await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${id}/`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
+      setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== id));
+
+    };
     
     return (
       <>
@@ -74,7 +91,15 @@ const Cart: FC = () => {
                       </div>
                           <div className="text-base font-thin text-center"> {carrinho.quantidade}</div>
                           <div className="text-base font-thin text-center"> R${carrinho.preco}</div>
-                          <div className="text-base font-semibold text-center"> R${parseFloat(carrinho.preco) * carrinho.quantidade}</div>
+                          <div className="text-base font-semibold text-center flex justify-between pl-28">
+                            <p>
+                            R${parseFloat(carrinho.preco) * carrinho.quantidade}
+                            </p> 
+                            <button className="text-red-500 hover:text-red-600 hover:text-xl duration-200"
+                            onClick={() => deleteProduct(carrinho.id)}>
+                            <TbTrashFilled />
+                            </button>
+                          </div>
                     </div>
                   ))
                 )}
