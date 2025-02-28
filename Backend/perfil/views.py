@@ -88,6 +88,22 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
 
         except Perfil.DoesNotExist:
             return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    def update(self, request, usuario=None, item_id=None):
+        try:
+            # Busca o perfil pelo ID (usuario é o ID do perfil na URL)
+            perfil = Perfil.objects.get(id=usuario)  
+
+            # Pega o item  com base no perfil e no ID do item    
+            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            serializer = ItemCarrinhoSerializer(item_carrinho, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Perfil.DoesNotExist:
+            return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ListaDesejosViewSet(viewsets.ViewSet):
@@ -151,6 +167,8 @@ class ListaDesejosViewSet(viewsets.ViewSet):
         
         except Perfil.DoesNotExist:
             return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        
 
 
 
