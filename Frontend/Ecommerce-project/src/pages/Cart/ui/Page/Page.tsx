@@ -50,18 +50,38 @@ const Cart: FC = () => {
       fetchProdutosCarrinho();
     }, [navigate]);
 
-    // const atualizarCarrinho = async () => {
-    //   const userId = localStorage.getItem("user_id");
-    //   const refreshtoken = localStorage.getItem("refresh_token");
-    //   const carrinhoData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate);
-    //   setProdutos_carrinho(carrinhoData);
-    // };
+    const checkout = async () => {
+      // implementar a logica de diminuir o estoque pela quantidade que está comprando
+      const refresh_token = localStorage.getItem('access_token')
+      produtos_carrinho.map(async (produto) => {
+        try {
+          await axios.put(`${import.meta.env.VITE_URL}/produto/${produto.id}`, { 
+            nome: produto.nome,
+            preco: produto.preco,
+            estoque: produto.estoque - produto.quantidade, 
+            categoria: produto.categoria
+          },
+            { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
+          console.log(`o novo estoque de ${produto.nome} é ${produto.estoque - produto.quantidade}`) 
+          
+          await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${produto.id}/`,
+             { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } });
+          setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== produto.id));
+      
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error('Erro ao atualizar o estoque:', error.response?.data);
+          } else {
+            console.error('Erro ao atualizar o estoque:', error);
+          }
+        }
+      })
+    };
     
     const deleteProduct = async (id: number) => {
       const refresh_token = localStorage.getItem('access_token')
       await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${id}/`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
       setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== id));
-
     };
     
     return (
@@ -122,7 +142,7 @@ const Cart: FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-center pb-5">
-                  <button className="btn btn-primary">Continuar compra</button>
+                  <button className="btn btn-primary" onClick={checkout}>Finalizar Compra</button>
                 </div>
             </div>
           </div>

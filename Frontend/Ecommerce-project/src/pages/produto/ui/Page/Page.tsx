@@ -90,7 +90,7 @@ const Produto: FC = () => {
     console.log('Produto adicionado ao carrinho!')
     }
     atualizarCarrinho()
-    // navigate('/compras')
+    navigate('/cart')
   }
 
   return (
@@ -115,6 +115,7 @@ const Produto: FC = () => {
                     <input 
                       type="number" 
                       min="1" 
+                      max={produto.estoque}
                       value={quantidade} 
                       onChange={(e) => setQuantidade(parseInt(e.target.value))}
                       className="w-16 text-center border border-gray-300 rounded-lg p-2"

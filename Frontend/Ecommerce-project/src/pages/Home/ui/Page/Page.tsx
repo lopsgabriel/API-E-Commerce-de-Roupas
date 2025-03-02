@@ -183,27 +183,31 @@ const Home: FC = () => {
                               <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">
                                 {produto.nome}
                               </h1>
-                              <div className="flex justify-between ">
+                              <div className="flex justify-between items-center ">
                                 <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
                                   R${produto.preco}
                                 </p>
-                                <button
-                                  type="button"
-                                  onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    togglelist(produto.id, "carrinhos");
-                                  }}
-                                  className="px-3  text-lg font-light text-gray-800 rounded-xl inline-block border-2 border-gray-950 hover:scale-110 absolute right-5 duration-100 z-10"
-                                >
-                                  {
-                                    listaCarrinho.some((item) => item.produto === produto.id) ? (
-                                      <TbShoppingCartCopy size={18} />
-                                    ) : (
-                                      <TbShoppingCartPlus size={18} />
-                                    )
-                                  }
-                                </button>
+
+                                {produto.estoque === 0 ? (
+                                    <p className="text-xs">Esgotado</p>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        togglelist(produto.id, "carrinhos");
+                                      }}
+                                      className="px-3  text-lg font-light text-gray-800 rounded-xl inline-block border-2 border-gray-950 hover:scale-110 absolute right-5 duration-100 z-10"
+                                    >
+                                      {listaCarrinho.some((item) => item.produto === produto.id) ? (
+                                          <TbShoppingCartCopy size={18} />
+                                        ) : (
+                                          <TbShoppingCartPlus size={18} />
+                                        )
+                                      }
+                                    </button>
+                                  )}
                               </div>
                             </div>
                           </a>
