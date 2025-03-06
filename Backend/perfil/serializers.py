@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Perfil, Item_carrinho, Lista_Desejos
+from .models import Perfil, Item_carrinho, Lista_Desejos, ItemPedido, Pedido
 from roupas.models import Produto
 from django.contrib.auth.models import User
 
@@ -53,4 +53,27 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+    
+class ItemPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPedido
+        fields = ['produto', 'quantidade', 'preco']
+
+class PedidoSerializer(serializers.ModelSerializer):
+    itens = ItemPedidoSerializer(many=True)  # Relacionando os itens no pedido
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'usuario', 'itens', 'data_criacao', 'status']
+
+    def create(self, validated_data):
+        itens_data = validated_data.pop('itens')  # Extraindo os itens
+        pedido = Pedido.objects.create(**validated_data)
+        
+        for item_data in itens_data:
+            ItemPedido.objects.create(pedido=pedido, **item_data)  # Criando os itens e associando ao pedido
+        
+        return pedido
+
+    
 

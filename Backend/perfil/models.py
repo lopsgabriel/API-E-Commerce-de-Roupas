@@ -9,7 +9,7 @@ class Perfil(models.Model):
         return self.usuario.username
 
 class Item_carrinho(models.Model):
-    perfil_carrinho = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='Item_carrinho')
+    usuario = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='Item_carrinho')
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     preco = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     quantidade = models.PositiveIntegerField(default=1)
@@ -32,3 +32,29 @@ class Lista_Desejos(models.Model):
 
     def __str__(self):
         return f'{self.produto}'
+    
+    # No pedido tem que ter uma array de produtos, no caso cada pedido tem um ou mais produtos
+class Pedido(models.Model):
+    usuario = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='pedidos')
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('pendente', 'Pendente'), ('enviado', 'Enviado'), ('entregue', 'Entregue')],
+        default='pendente'
+    )
+
+    def __str__(self):
+        return f'Pedido {self.id} - {self.usuario}'
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='itens')
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    quantidade = models.PositiveIntegerField(default=1)
+    preco = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        self.preco = self.produto.preco
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.produto} x {self.quantidade}'

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from perfil.views import PerfilViewSet,ItemCarrinhoViewSet, ListaCarrinhoViewSet, ListaDesejosViewSet, UserCreateView
+from perfil.views import PerfilViewSet,ItemCarrinhoViewSet, ListaCarrinhoViewSet, ListaDesejosViewSet, UserCreateView, PedidoViewSet
 from roupas.views import CategoriaViewSet, ProdutoViewSet, CategoriaProdutosViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
@@ -24,6 +24,7 @@ urlpatterns = [
     path('carrinhos/<int:usuario>/', ItemCarrinhoViewSet.as_view({'get': 'list', 'post': 'create', 'put': 'update'}), name='CarrinhoUsuario'),
     path('listaDesejos/<int:usuario>/<int:item_id>/', ListaDesejosViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}), name='ListaDesejosItem'),
     path('listaDesejos/<int:usuario>/', ListaDesejosViewSet.as_view({'get': 'list', 'post': 'create'}), name='ListaDesejosUsuario'),
+    path('pedidos/<int:usuario>/', PedidoViewSet.as_view({'get': 'list', 'post': 'create'}), name='PedidosUsuario'),
     path('register/', UserCreateView.as_view(), name='user-register'),
 ]
 
