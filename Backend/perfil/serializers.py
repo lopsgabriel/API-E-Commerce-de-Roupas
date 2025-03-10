@@ -6,15 +6,15 @@ from django.contrib.auth.models import User
 
 class ItemCarrinhoSerializer(serializers.ModelSerializer):
     produto = serializers.PrimaryKeyRelatedField(queryset=Produto.objects.all())  # Usando o ID para criar
-    perfil_carrinho = serializers.PrimaryKeyRelatedField(queryset=Perfil.objects.all())  # Usando o ID para criar
+    usuario = serializers.PrimaryKeyRelatedField(queryset=Perfil.objects.all())  # Usando o ID para criar
 
     produto_nome = serializers.StringRelatedField(source='produto')
-    usuario_nome = serializers.StringRelatedField(source='perfil_carrinho')
+    usuario_nome = serializers.StringRelatedField(source='usuario')
 
 
     class Meta:
         model = Item_carrinho
-        fields = ['id', 'perfil_carrinho', 'usuario_nome', 'produto', 'produto_nome', 'quantidade']
+        fields = ['id', 'usuario', 'usuario_nome', 'produto', 'produto_nome', 'quantidade']
 
 class ListaDesejosSerializer(serializers.ModelSerializer):
     produto = serializers.PrimaryKeyRelatedField(queryset=Produto.objects.all())  # Usando o ID para criar

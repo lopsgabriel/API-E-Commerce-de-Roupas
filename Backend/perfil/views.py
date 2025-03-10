@@ -31,7 +31,7 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
             perfil = Perfil.objects.get(id=usuario)  
 
             # Retorna todos os itens de carrinho associados a esse perfil
-            itens_carrinho = Item_carrinho.objects.filter(perfil_carrinho=perfil)
+            itens_carrinho = Item_carrinho.objects.filter(usuario=perfil)
             serializer = ItemCarrinhoSerializer(itens_carrinho, many=True)
 
             return Response(serializer.data)
@@ -45,7 +45,7 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
             perfil = Perfil.objects.get(id=usuario)  
 
             # Pega o item  com base no perfil e no ID do item
-            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            item_carrinho = Item_carrinho.objects.get(usuario=perfil, produto__id=item_id)
             serializer = ItemCarrinhoSerializer(item_carrinho)
 
             return Response(serializer.data)
@@ -63,7 +63,7 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
             perfil = Perfil.objects.get(id=usuario)  
 
             # Pega o item  com base no perfil e no ID do item    
-            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            item_carrinho = Item_carrinho.objects.get(usuario=perfil, produto__id=item_id)
             item_carrinho.delete()
 
             return Response({"detail": "Item de carrinho excluído com sucesso."}, status=status.HTTP_204_NO_CONTENT)
@@ -82,7 +82,7 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
             # Cria o novo item no carrinho com os dados enviados    
             serializer = ItemCarrinhoSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(perfil_carrinho=perfil)
+                serializer.save(usuario=perfil)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +95,7 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
             perfil = Perfil.objects.get(id=usuario)  
 
             # Pega o item  com base no perfil e no ID do item    
-            item_carrinho = Item_carrinho.objects.get(perfil_carrinho=perfil, produto__id=item_id)
+            item_carrinho = Item_carrinho.objects.get(usuario=perfil, produto__id=item_id)
             serializer = ItemCarrinhoSerializer(item_carrinho, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -178,7 +178,7 @@ class ListaCarrinhoViewSet(generics.ListAPIView):
             perfil = Perfil.objects.get(id=usuario)
 
             #Retorna os itens do carrinho associado ao usuario
-            return Item_carrinho.objects.filter(perfil_carrinho=perfil)
+            return Item_carrinho.objects.filter(usuario=perfil)
         except Perfil.DoesNotExist:
             #Se o perfil não for encontrado, retorna uma queryset vazia
             return Item_carrinho.objects.none()
