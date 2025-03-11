@@ -24,7 +24,7 @@ interface dadosProduto {
 }
 
 interface ProdutosCarrinho {
-  perfil_carrinho: number;
+  usuario: number;
   produto: number;
   quantidade: number;
 }
@@ -69,7 +69,7 @@ const Produto: FC = () => {
       await axios.put(
         `${import.meta.env.VITE_URL}carrinhos/${user_id}/${id_produto}/`,
         {
-          'perfil_carrinho': user_id,
+          'usuario': user_id,
           'produto': id_produto,
           'quantidade': quantidade + matchingItem.quantidade
         },
@@ -81,7 +81,7 @@ const Produto: FC = () => {
     await axios.post(
       `${import.meta.env.VITE_URL}carrinhos/${user_id}/`,
       {
-        'perfil_carrinho': user_id,
+        'usuario': user_id,
         'produto': id_produto,
         'quantidade': quantidade
       },

@@ -26,7 +26,7 @@ interface ListaDesejo {
 }
 
 interface ProdutosCarrinho {
-  perfil_carrinho: number;
+  usuario: number;
   produto: number;
   quantidade: number;
 }
@@ -103,14 +103,14 @@ const Home: FC = () => {
           await axios.post(
             `${import.meta.env.VITE_URL}${listType}/${user_id}/`,
             {
-              'perfil_carrinho': user_id,
+              'usuario': user_id,
               'produto': produtoId,
               'quantidade': 1
             },
             { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshtoken}` } }
           );
           setListas[listType]((prev: ProdutosCarrinho[]) => [...prev, { 
-            'perfil_carrinho': Number(user_id), 
+            'usuario': Number(user_id), 
             'produto': produtoId, 
             'quantidade': 1
           }]);

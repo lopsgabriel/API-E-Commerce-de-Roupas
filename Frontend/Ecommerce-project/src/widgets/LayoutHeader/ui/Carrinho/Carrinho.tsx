@@ -5,7 +5,7 @@ import { TbShoppingCart } from "react-icons/tb";
 
 interface ProdutosCarrinho {
   id: number;
-  perfil_carrinho: number;
+  usuario: number;
   usuario_nome: string;
   produto: number;
   produto_nome: string;

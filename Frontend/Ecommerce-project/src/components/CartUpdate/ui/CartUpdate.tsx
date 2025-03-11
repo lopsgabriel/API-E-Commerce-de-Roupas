@@ -1,16 +1,9 @@
-// Quero criar um componente capaz de atualizar o carrinho, no caso ele recebe os itensque estão guardados no carrinho
-// e ai ele guarda em uma variavel, assim mandando para o header os itens atualizados
-// essa função será chamada sempre que um item for adicionado no carro na pagina Home
-// ou seja, o item vai ser adicionado, essa função vai ser chamada, e ai ela atualiza os itens do carrinho
-// e ai ele vai mandar para o header os itens atualizados
-
 import { fetchAuthApi } from "@/components";
 import { useNavigate } from "react-router-dom";
-// import { useState } from "react";
 
 interface ProdutosCarrinho {
   id: number;
-  perfil_carrinho: number;
+  usuario: number;
   usuario_nome: string;
   produto: number;
   produto_nome: string;

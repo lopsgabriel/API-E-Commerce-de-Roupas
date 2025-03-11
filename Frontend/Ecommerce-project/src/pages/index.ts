@@ -8,5 +8,6 @@ import { Cart } from "./Cart"
 import { Categoria } from "./Categoria";
 import { SignUp } from "./SignUp";
 import { Favoritos } from "./Favoritos";
+import { Pedidos } from "./Pedidos";
 
-export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos };
+export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos, Pedidos };

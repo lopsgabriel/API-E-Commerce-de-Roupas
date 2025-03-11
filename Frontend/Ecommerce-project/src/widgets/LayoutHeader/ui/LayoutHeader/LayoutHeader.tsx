@@ -59,6 +59,7 @@ const LayoutHeader: FC = () => {
                       { name: "Adicionar Produto", href: "/adicionar" },
                       { name: "Favoritos", href: "/favoritos" },
                       { name: "Logout", href: "/logout" },
+                      { name: "Meus Pedidos", href: "/pedidos" },
                     ]}
                   />
                   </div>

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "@/app/Layout";
-import { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos } from "@/pages";
+import { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos, Pedidos } from "@/pages";
 import { PrivateRoute } from "@/components";
 
 const App: FC = () => {
@@ -12,45 +12,45 @@ const App: FC = () => {
         <Route index element={ <Login /> } />
         <Route path="signup" element={ <SignUp /> } />
         <Route path="dashboard" element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
         />
 
         <Route path="adicionar" element={
-            <PrivateRoute>
-              <Adicionar />
-            </PrivateRoute>
-          }
+          <PrivateRoute>
+            <Adicionar />
+          </PrivateRoute>
+        }
         />
 
         <Route path="produto/:id_produto" element={
-            <PrivateRoute>
-              <Produto />
-            </PrivateRoute>
-          }
+          <PrivateRoute>
+            <Produto />
+          </PrivateRoute>
+        }
         />
 
         <Route path="logout" element={
-            <PrivateRoute>
-              <Logout />
-            </PrivateRoute>
-          }
+          <PrivateRoute>
+            <Logout />
+          </PrivateRoute>
+        }
         />
 
         <Route path="cart" element={
           <PrivateRoute>
             <Cart />
           </PrivateRoute>
-          }
+        }
         />
 
         <Route path="favoritos" element={
           <PrivateRoute>
             <Favoritos />
           </PrivateRoute>
-          }
+        }
         />
 
         <Route path="categoria/:categoria" element={
@@ -59,6 +59,14 @@ const App: FC = () => {
           </PrivateRoute>
         }
         />
+
+        <Route path="pedidos" element={
+          <PrivateRoute>
+            <Pedidos />
+          </PrivateRoute>
+        }
+        />
+
         {/* Rota para páginas não encontradas */}
         <Route path="*" element={<NoMatch />} />
       </Route>
