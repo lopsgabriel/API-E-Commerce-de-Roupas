@@ -39,11 +39,50 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'roupas',
     'rest_framework',
+
+    'allauth',
+    'allauth.account',
+
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'django.contrib.sites',
+
     # 'rest_framework.authtoken',
     'rest_framework_simplejwt',
     "corsheaders",
     'perfil',
+    'oauth2_provider',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'rest_framework.authtoken',
 ]
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': ['read:user', 'user:email'],
+    }
+}
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
+
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23liQ703ig8p0VaRBt'
+SOCIAL_AUTH_GITHUB_SECRET = '67e619d591e11fd8f7a91ddbd69a5f21f106b0e8'
+
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']  # Permissões para pegar o e-mail do usuário
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'  # Redirecionamento após o login (pode ser o dashboard ou home)
+SOCIAL_AUTH_LOGOUT_REDIRECT_URL = '/'
+
+# Para garantir que o token será enviado ao fazer chamadas à API
+SOCIAL_AUTH_GITHUB_PROFILE_EXTRA_PARAMS = {
+    'fields': ['id', 'login', 'email'],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +93,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
     
 ]
 
@@ -74,6 +114,28 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': 'Ov23liQ703ig8p0VaRBt',
+            'secret': '67e619d591e11fd8f7a91ddbd69a5f21f106b0e8',
+            'key': ''
+        }
+    }
+}
+
+SOCIALACCOUNT_FORMS = {
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+    'signup': 'allauth.socialaccount.forms.SignupForm',
+}
+
 
 WSGI_APPLICATION = 'setup.wsgi.application'
 
@@ -132,17 +194,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        # 'rest_framework.permissions.IsAuthenticated',
+        ['rest_framework.permissions.IsAuthenticated']
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+LOGIN_URL = '/admin/login/'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
