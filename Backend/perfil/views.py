@@ -3,22 +3,26 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import PerfilSerializer, ItemCarrinhoSerializer, ListaCarrinhoSerializer, ListaDesejosSerializer, UserSerializer, ItemPedidoSerializer, PedidoSerializer
 from .models import Perfil, Item_carrinho, Lista_Desejos, ItemPedido, Pedido
 from rest_framework import viewsets, filters, generics, status
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
+from allauth.socialaccount.models import SocialAccount, SocialToken
+from rest_framework.views import APIView
+# from django.conf import settings
+# import requests
 
 class PerfilViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [ BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [ BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Perfil.objects.all().order_by('usuario')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = PerfilSerializer
 
-
-#futuramente retirar o itemcarrinhoviewset
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [ BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [ BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Item_carrinho.objects.all().order_by('produto')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['produto']
@@ -266,4 +270,17 @@ class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+class GitHubAccessTokenView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        try:
+            # Pega o SocialAccount relacionado ao usuário autenticado
+            social_account = SocialAccount.objects.get(user=request.user, provider='github')
+
+            # Obtém o token do GitHub
+            access_token = social_account.socialtoken_set.first().token
+
+            return Response({'access_token': access_token})
+        except SocialAccount.DoesNotExist:
+            return Response({'error': 'GitHub account not linked.'}, status=400)
