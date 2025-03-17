@@ -30,7 +30,6 @@ const LayoutHeader: FC = () => {
           <div className="navbar-end relative">
             {isAuthenticated ? (
               <>
-                {/* botao de pesquisa */}
                 <button className="btn-ghost btn-circle btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -47,19 +46,16 @@ const LayoutHeader: FC = () => {
                     />
                   </svg>
                 </button>
-                {/* botao do carrinho */}
                   <div className="indicator">
                     <Carrinho />
                   </div>
-
-                {/* botao de usuario */}
                   <div className="indicator">
                   <User
                     links={[
                       { name: "Adicionar Produto", href: "/adicionar" },
                       { name: "Favoritos", href: "/favoritos" },
-                      { name: "Logout", href: "/logout" },
                       { name: "Meus Pedidos", href: "/pedidos" },
+                      { name: "Logout", href: "/logout" },
                     ]}
                   />
                   </div>

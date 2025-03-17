@@ -50,6 +50,32 @@ const Login = () => {
     }
   };
 
+  const getGithubAccessToken = async () => {
+    const response = await fetch('http://localhost:8000/api/github/token/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('your_auth_token')}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.access_token){
+      console.log('Access Token do GitHub:', data.access_token);
+      localStorage.setItem('github_access_token', data.access_token); 
+    } else {
+      console.error('Erro ao obter o token:', data.error)
+    }
+  }
+
+
+  const handleGitHubLogin = async () => {
+    const url = 'https://github.com/login/oauth/authorize?client_id=Ov23liQ703ig8p0VaRBt&redirect_uri=http://localhost:8000/accounts/github/login/callback/&scope=repo,user'; // URL do seu backend para iniciar o login com GitHub
+  
+    // Redireciona para o backend para iniciar o login via GitHub
+    window.location.href = url;
+  };
+
   return (
     <section>
       <div className="pt-60 min-h-[calc(100vh-64px)] bg-base-200">
@@ -84,6 +110,13 @@ const Login = () => {
               Sign Up
             </a>
           </p>
+            <button onClick={handleGitHubLogin}>
+              Github
+            </button>
+
+            <button onClick={getGithubAccessToken}>
+              AAAAAAAAAAAAAAA
+            </button>
           </form>
           {error && <p className="text-red-500 pt-2">{error}</p>}
         </div>

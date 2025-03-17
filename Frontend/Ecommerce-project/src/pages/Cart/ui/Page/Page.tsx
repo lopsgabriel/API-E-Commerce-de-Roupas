@@ -50,8 +50,25 @@ const Cart: FC = () => {
       fetchProdutosCarrinho();
     }, [navigate]);
 
+    
+    const deleteProduct = async (id: number) => {
+      const refresh_token = localStorage.getItem('access_token')
+      await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${id}/`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
+      setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== id));
+    };
+
+    const createPedido = async () => {
+      const refresh_token = localStorage.getItem('access_token')
+      const pedido = await axios.post(`${import.meta.env.VITE_URL}pedidos/${user_id}/`,
+        { usuario: user_id,
+          itens: produtos_carrinho.map((produto) => ({ produto: produto.id, quantidade: produto.quantidade }))
+         },
+        { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
+      console.log(pedido.data)
+      return pedido.data;
+    };
+    
     const checkout = async () => {
-      // implementar a logica de diminuir o estoque pela quantidade que está comprando
       const refresh_token = localStorage.getItem('access_token')
       produtos_carrinho.map(async (produto) => {
         try {
@@ -64,10 +81,8 @@ const Cart: FC = () => {
             { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
           console.log(`o novo estoque de ${produto.nome} é ${produto.estoque - produto.quantidade}`) 
           
-          await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${produto.id}/`,
-             { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } });
-          setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== produto.id));
-      
+          deleteProduct(produto.id);  
+          createPedido();
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.error('Erro ao atualizar o estoque:', error.response?.data);
@@ -77,13 +92,7 @@ const Cart: FC = () => {
         }
       })
     };
-    
-    const deleteProduct = async (id: number) => {
-      const refresh_token = localStorage.getItem('access_token')
-      await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${id}/`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
-      setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== id));
-    };
-    
+
     return (
       <>
         <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
