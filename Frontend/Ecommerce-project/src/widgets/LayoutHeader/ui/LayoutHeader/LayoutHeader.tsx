@@ -5,6 +5,8 @@ import User from "../User/User";
 import { useState } from "react";
 import Carrinho from "../Carrinho/Carrinho";
 import { useLocation } from 'react-router-dom';
+import { useSearch } from "@/components";
+
 
 const LayoutHeader: FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,8 +14,9 @@ const LayoutHeader: FC = () => {
   const location = useLocation(); 
   const isAdmin = localStorage.getItem("admin");
   const [fadeOut, setFadeOut] = useState(false);  // Novo estado para fade-out
-  const [search, setSearch] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const { setSearchQuery } = useSearch();
+  const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -40,6 +43,12 @@ const LayoutHeader: FC = () => {
       };
     }
   }, [ location])
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setSearchQuery((e.target as HTMLInputElement).value);
+  };
+  
+  
   return (
     <>
       <header>
@@ -60,13 +69,20 @@ const LayoutHeader: FC = () => {
                     <p className="ml-1 font-normal text-sm italic">{(localStorage.getItem("username") ?? "").charAt(0).toUpperCase() + (localStorage.getItem("username") ?? "").slice(1)}</p>
                   </div>
                 )}
-                <form className="relative w-32 mr-10 focus-within:w-5/12 transition-all duration-300">
+                <form className="relative w-32 mr-10 focus-within:w-5/12 transition-all duration-300"
+                  onSubmit={(e) => e.preventDefault()}>
                   <input
                     type="text"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange ={(e) => setSearch(e.target.value)}
                     onFocus={() => setIsExpanded(true)}
                     onBlur={() => setIsExpanded(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault(); // Impede o envio do formulário ao pressionar Enter
+                        handleSearch(e); // Agora processa a pesquisa somente quando o Enter for pressionado
+                      }
+                    }}
                     className={`peer cursor-pointer relative z-90 h-10 w-40 pl-10 bg-base-200 rounded-full text-gray-400 focus:w-full focus:pl-10 focus:outline-none transition-all duration-300 ${
                       isExpanded ? "w-28" : "w-16"
                     }`}

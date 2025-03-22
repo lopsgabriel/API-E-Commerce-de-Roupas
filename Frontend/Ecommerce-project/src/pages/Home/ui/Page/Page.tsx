@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
-import { fetchAuthApi } from "@/components";
+import { fetchAuthApi, useSearch } from "@/components";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { VscHeart } from "react-icons/vsc";
 import "../../../../app/index.css/"
 import axios from "axios";
@@ -38,6 +38,18 @@ const Home: FC = () => {
   const [listaCarrinho, setListaCarrinho] = useState<ProdutosCarrinho[]>([])
   const navigate = useNavigate()
   const user_id = localStorage.getItem("user_id");
+  const { searchQuery } = useSearch();
+  const location = useLocation(); 
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (searchQuery) {
+      queryParams.set('search', searchQuery);
+    } else {
+      queryParams.delete('search');
+    }
+    navigate({ search: queryParams.toString() }, { replace: true });
+  }, [searchQuery, navigate, location.search]);
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -58,15 +70,22 @@ const Home: FC = () => {
           };
         }));
 
+        const filteredProdutos = searchQuery
+          ? produtosComCategoria.filter((produto) => produto.nome.toLowerCase().includes(searchQuery.toLowerCase()))
+          : produtosComCategoria;
+
+        setProdutos(filteredProdutos);
 
         setCategorias([...new Set(produtosComCategoria.map((produto) => produto.categoria))]);
-        setProdutos(produtosComCategoria);
+        // setProdutos(produtosComCategoria);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
       }
     };
     fetchProdutos();
-  }, [navigate, user_id]);
+  }, [navigate, user_id, searchQuery]);
+
+
 
 
   async function togglelist(produtoId: number, listType: "carrinhos" | "listaDesejos") {
@@ -143,81 +162,94 @@ const Home: FC = () => {
       <section>
         <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
           <div className="hero-content flex flex-col gap-4 w-full">
-            {categorias.map((categoria) => (
-              <div key={categoria}>
-                <div className="flex ">
-                  <a  href={`/categoria/${categoria}`} className="text-3xl text-gray-500 font-light hover:text-gray-300 duration-100 pb-4">{categoria}</a>
-                </div>
-                <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-4 gap-4">
-                  {produtos.filter((produto) => produto.categoria === categoria).map((produto) => (
-                    <React.Fragment key={produto.id}>
-                      <div className="w-52 relative">
-                        <div className="relative hover:scale-105 duration-300">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              togglelist(produto.id, "listaDesejos");
-                            }}
-                            className="absolute right-4 top-4 hover:scale-110 duration-100 text-black icon-heart z-10"
-                          >
-                            {
-                              listaDesejos.some((item) => item.produto === produto.id) ? (
-                                <VscHeartFilled size={20} />
-                              ) : (
-                                <VscHeart size={20} />
-                             )
-                            }
-                          </button>
-                          <a href={`produto/${produto.id}`}>
-                            <img
-                              src={produto.imagem}
-                              className="w-52 h-52 object-cover rounded-t-lg shadow-2xl"
-                            />
-                            <div className="bg-white p-4 rounded-b-lg">
-                              <div className="flex justify-between">
-                                <p className="text-sm font-light text-gray-700 opacity-90 pt-1">
-                                  {produto.categoria}
-                                </p>
-                              </div>
-                              <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">
-                                {produto.nome}
-                              </h1>
-                              <div className="flex justify-between items-center ">
-                                <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
-                                  R${produto.preco}
-                                </p>
+            {categorias.map((categoria) => {
+              // Verificar se há produtos na categoria
+              const produtosNaCategoria = produtos.filter((produto) => produto.categoria === categoria);
+              
+              // Se não houver produtos, não renderiza essa categoria
+              if (produtosNaCategoria.length === 0) {
+                return null; // Ignora a renderização dessa categoria
+              }
 
-                                {produto.estoque === 0 ? (
-                                    <p className="text-xs">Esgotado</p>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        togglelist(produto.id, "carrinhos");
-                                      }}
-                                      className="px-3  text-lg font-light text-gray-800 rounded-xl inline-block border-2 border-gray-950 hover:scale-110 absolute right-5 duration-100 z-10"
-                                    >
-                                      {listaCarrinho.some((item) => item.produto === produto.id) ? (
-                                          <TbShoppingCartCopy size={18} />
-                                        ) : (
-                                          <TbShoppingCartPlus size={18} />
-                                        )
-                                      }
-                                    </button>
-                                  )}
+              return (
+              
+
+
+                <div key={categoria}>
+                  <div className="flex ">
+                    <a  href={`/categoria/${categoria}`} className="text-3xl text-gray-500 font-light hover:text-gray-300 duration-100 pb-4">{categoria}</a>
+                  </div>
+                  <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    {produtos.filter((produto) => produto.categoria === categoria).map((produto) => (
+                      <React.Fragment key={produto.id}>
+                        <div className="w-52 relative">
+                          <div className="relative hover:scale-105 duration-300">
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                togglelist(produto.id, "listaDesejos");
+                              }}
+                              className="absolute right-4 top-4 hover:scale-110 duration-100 text-black icon-heart z-10"
+                            >
+                              {
+                                listaDesejos.some((item) => item.produto === produto.id) ? (
+                                  <VscHeartFilled size={20} />
+                                ) : (
+                                  <VscHeart size={20} />
+                              )
+                              }
+                            </button>
+                            <a href={`produto/${produto.id}`}>
+                              <img
+                                src={produto.imagem}
+                                className="w-52 h-52 object-cover rounded-t-lg shadow-2xl"
+                              />
+                              <div className="bg-white p-4 rounded-b-lg">
+                                <div className="flex justify-between">
+                                  <p className="text-sm font-light text-gray-700 opacity-90 pt-1">
+                                    {produto.categoria}
+                                  </p>
+                                </div>
+                                <h1 className="text-xl text-gray-800 font-bold truncate max-w-[220px]">
+                                  {produto.nome}
+                                </h1>
+                                <div className="flex justify-between items-center ">
+                                  <p className="px-1 py-0.5 text-lg font-light text-gray-800 rounded-xl inline-block">
+                                    R${produto.preco}
+                                  </p>
+
+                                  {produto.estoque === 0 ? (
+                                      <p className="text-xs">Esgotado</p>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={(event) => {
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          togglelist(produto.id, "carrinhos");
+                                        }}
+                                        className="px-3  text-lg font-light text-gray-800 rounded-xl inline-block border-2 border-gray-950 hover:scale-110 absolute right-5 duration-100 z-10"
+                                      >
+                                        {listaCarrinho.some((item) => item.produto === produto.id) ? (
+                                            <TbShoppingCartCopy size={18} />
+                                          ) : (
+                                            <TbShoppingCartPlus size={18} />
+                                          )
+                                        }
+                                      </button>
+                                    )}
+                                </div>
                               </div>
-                            </div>
-                          </a>
+                            </a>
+                          </div>
                         </div>
-                      </div>
-                    </React.Fragment>
-                  ))}
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
