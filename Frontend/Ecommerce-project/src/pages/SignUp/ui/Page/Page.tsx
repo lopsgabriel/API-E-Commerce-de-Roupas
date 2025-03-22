@@ -1,5 +1,6 @@
 import { FC, useState, ChangeEvent, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface Usuario {
   username: string;
@@ -8,6 +9,7 @@ interface Usuario {
 }
 
 const SignUp: FC = () => {
+  const navigate = useNavigate();
   const [usuario, setUsuario] = useState<Usuario>({
     username: "",
     email: "",
@@ -20,6 +22,7 @@ const SignUp: FC = () => {
         headers: { "Content-Type": "application/json" },
       });
       console.log("Usuário criado com sucesso:", response.data);
+      navigate("/");
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Erro na resposta:", error.response?.data);

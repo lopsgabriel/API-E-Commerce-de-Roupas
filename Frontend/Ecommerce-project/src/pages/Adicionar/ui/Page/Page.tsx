@@ -36,7 +36,12 @@ const Adicionar: FC = () => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get<Categoria[]>(`${import.meta.env.VITE_URL}/categorias`)
+        const response = await axios.get<Categoria[]>(`${import.meta.env.VITE_URL}/categorias`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        })
         setCategorias(response.data)
       } catch (error) {
         console.error("Erro ao buscar categorias:", error)
@@ -58,7 +63,8 @@ const Adicionar: FC = () => {
 
     try {
       const response = await axios.post<DadosResposta>(`${import.meta.env.VITE_URL}produtos/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data', }
+        
       })
       console.log(response.data)
       // quero que seja redirecionado para pagina principal depois que o produto for criado

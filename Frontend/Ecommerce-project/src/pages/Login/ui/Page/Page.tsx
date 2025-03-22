@@ -34,13 +34,21 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-
       localStorage.clear();
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
 
       const decoded = jwtDecode(response.data.access) as { user_id: string };
       localStorage.setItem("user_id", decoded.user_id);
+
+      const user = await axios.get(`${import.meta.env.VITE_URL}/perfis/?usuario_id=${decoded.user_id}`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${response.data.access}` },
+      })
+      const [userData] = user.data
+      console.log(userData)
+      localStorage.setItem("username", userData.usuario);
+      localStorage.setItem("user_id", userData.id);
+      localStorage.setItem("admin", userData.admin);
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.access}`;
       navigate("/dashboard");
@@ -50,35 +58,9 @@ const Login = () => {
     }
   };
 
-  const getGithubAccessToken = async () => {
-    const response = await fetch('http://localhost:8000/api/github/token/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('your_auth_token')}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.access_token){
-      console.log('Access Token do GitHub:', data.access_token);
-      localStorage.setItem('github_access_token', data.access_token); 
-    } else {
-      console.error('Erro ao obter o token:', data.error)
-    }
-  }
-
-
-  const handleGitHubLogin = async () => {
-    const url = 'https://github.com/login/oauth/authorize?client_id=Ov23liQ703ig8p0VaRBt&redirect_uri=http://localhost:8000/accounts/github/login/callback/&scope=repo,user'; // URL do seu backend para iniciar o login com GitHub
-  
-    // Redireciona para o backend para iniciar o login via GitHub
-    window.location.href = url;
-  };
-
   return (
     <section>
-      <div className="pt-60 min-h-[calc(100vh-64px)] bg-base-200">
+      <div className="pt-40 min-h-[calc(100vh-64px)] bg-base-200">
         <div className="login-form flex flex-col justify-center items-center">
           <form onSubmit={handleSubmit} className="flex flex-col items-center bg-base-100 p-8 rounded-xl shadow-lg w-full max-w-lg mb-4">
             <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
@@ -110,13 +92,6 @@ const Login = () => {
               Sign Up
             </a>
           </p>
-            <button onClick={handleGitHubLogin}>
-              Github
-            </button>
-
-            <button onClick={getGithubAccessToken}>
-              AAAAAAAAAAAAAAA
-            </button>
           </form>
           {error && <p className="text-red-500 pt-2">{error}</p>}
         </div>
