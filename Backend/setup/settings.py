@@ -19,25 +19,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'roupas',
     'rest_framework',
-    'rest_framework.authtoken',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.github',
-    'django.contrib.sites',
-
-    # 'rest_framework.authtoken',
     'rest_framework_simplejwt',
     "corsheaders",
     'perfil',
 
 
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,10 +35,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "allauth.account.middleware.AccountMiddleware",
     
 ]
-
 ROOT_URLCONF = 'setup.urls'
 
 TEMPLATES = [
@@ -69,31 +54,6 @@ TEMPLATES = [
         },
     },
 ]
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-    
-]
-
-GITHUB_CLIENT_ID = 'Ov23liQ703ig8p0VaRBt'
-GITHUB_CLIENT_SECRET = '2c14f447b76478835dd506f3fd1d2bb8294260b7'
-
-SOCIAL_AUTH_GITHUB_KEY = 'Ov23liQ703ig8p0VaRBt'  # Substitua pelo seu Client ID
-SOCIAL_AUTH_GITHUB_SECRET = '2c14f447b76478835dd506f3fd1d2bb8294260b7'
-
-SOCIALACCOUNT_PROVIDERS = {
-    'github': {
-        'APP': {
-            'client_id': 'Ov23liQ703ig8p0VaRBt',
-            'secret': '2c14f447b76478835dd506f3fd1d2bb8294260b7',
-            'key': ''
-        },
-        'SCOPE': ['user', 'repo', 'gist'],  # Escopos que você deseja acessar
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'EXCHANGE_TOKEN': True,
-    }
-}
 
 REST_USE_JWT = True
 
@@ -142,21 +102,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Usar sessão para autenticação
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        ['rest_framework.permissions.IsAuthenticated']
+        # 'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
-
-LOGIN_URL = '/admin/login/'
-LOGIN_REDIRECT_URL = 'http://localhost:5173/'
-ACCOUNT_LOGOUT_REDIRECT_URL = "http://localhost:5173/"
-
-SOCIALACCOUNT_LOGIN_ON_GET = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

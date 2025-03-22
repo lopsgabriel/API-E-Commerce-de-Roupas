@@ -5,6 +5,7 @@ class Perfil(models.Model):
     usuario = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='perfil')
     carteira = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+
     def __str__(self):
         return self.usuario.username
 

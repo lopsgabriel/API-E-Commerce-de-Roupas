@@ -8,20 +8,24 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
-from allauth.socialaccount.models import SocialAccount, SocialToken
-from rest_framework.views import APIView
-# from django.conf import settings
-# import requests
 
 class PerfilViewSet(viewsets.ModelViewSet):
-    authentication_classes = [ BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Perfil.objects.all().order_by('usuario')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     serializer_class = PerfilSerializer
 
+    def get_queryset(self):
+        """
+        Retorna o perfil do usuário autenticado.
+        """
+        user_id = self.request.query_params.get('usuario_id')
+        if user_id is not None:
+            # Filtra pelo username do usuário no campo 'usuario' que é uma chave estrangeira para User
+            return Perfil.objects.filter(usuario__id=user_id)
+        return Perfil.objects.all()  # Retorna todos os perfis se o parâmetro não for fornecido
+
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
-    authentication_classes = [ BasicAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Item_carrinho.objects.all().order_by('produto')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -270,17 +274,3 @@ class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-class GitHubAccessTokenView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        try:
-            # Pega o SocialAccount relacionado ao usuário autenticado
-            social_account = SocialAccount.objects.get(user=request.user, provider='github')
-
-            # Obtém o token do GitHub
-            access_token = social_account.socialtoken_set.first().token
-
-            return Response({'access_token': access_token})
-        except SocialAccount.DoesNotExist:
-            return Response({'error': 'GitHub account not linked.'}, status=400)

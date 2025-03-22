@@ -32,11 +32,16 @@ class ListaDesejosSerializer(serializers.ModelSerializer):
 
 class PerfilSerializer(serializers.ModelSerializer):
     usuario = serializers.ReadOnlyField(source='usuario.username')
+    usuario_id = serializers.ReadOnlyField(source='usuario.id')
+    admin = serializers.SerializerMethodField()
     carrinho = ItemCarrinhoSerializer(source='Item_carrinho', many=True, read_only=True)
     wishlist = ListaDesejosSerializer(source='lista_desejos', many=True, read_only=True)
     class Meta: 
         model = Perfil
-        fields = ['id', 'usuario', 'carteira', 'carrinho', 'wishlist']
+        fields = ['id', 'usuario', 'usuario_id', 'admin', 'carteira', 'carrinho', 'wishlist']
+    
+    def get_admin(self, obj):
+        return obj.usuario.is_superuser or obj.usuario.is_staff
 
 class ListaCarrinhoSerializer(serializers.ModelSerializer):
     produto = serializers.StringRelatedField()
