@@ -63,7 +63,7 @@ const Adicionar: FC = () => {
 
     try {
       const response = await axios.post<DadosResposta>(`${import.meta.env.VITE_URL}produtos/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data', }
+        headers: { 'Content-Type': 'multipart/form-data', authorization: `Bearer ${localStorage.getItem('access_token')}` },
         
       })
       console.log(response.data)

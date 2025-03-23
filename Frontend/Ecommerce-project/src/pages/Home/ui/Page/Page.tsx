@@ -7,6 +7,7 @@ import "../../../../app/index.css/"
 import axios from "axios";
 import { VscHeartFilled } from "react-icons/vsc";
 import { TbShoppingCartCopy, TbShoppingCartPlus } from "react-icons/tb";
+import { SlArrowRight } from "react-icons/sl";
 
 interface Produto {
   id: number;
@@ -71,10 +72,13 @@ const Home: FC = () => {
         }));
 
         const filteredProdutos = searchQuery
-          ? produtosComCategoria.filter((produto) => produto.nome.toLowerCase().includes(searchQuery.toLowerCase()))
+          ? produtosComCategoria.filter((produto) =>
+              produto.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              produto.categoria.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              produto.descricao.toLowerCase().includes(searchQuery.toLowerCase())
+            )
           : produtosComCategoria;
-
-        setProdutos(filteredProdutos);
+          setProdutos(filteredProdutos);
 
         setCategorias([...new Set(produtosComCategoria.map((produto) => produto.categoria))]);
         // setProdutos(produtosComCategoria);
@@ -175,12 +179,12 @@ const Home: FC = () => {
               
 
 
-                <div key={categoria}>
+                <div key={categoria} className="pl-44">
                   <div className="flex ">
                     <a  href={`/categoria/${categoria}`} className="text-3xl text-gray-500 font-light hover:text-gray-300 duration-100 pb-4">{categoria}</a>
                   </div>
-                  <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    {produtos.filter((produto) => produto.categoria === categoria).map((produto) => (
+                  <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-5 gap-4">
+                    {produtos.filter((produto) => produto.categoria === categoria).slice(0, 4).map((produto) => (
                       <React.Fragment key={produto.id}>
                         <div className="w-52 relative">
                           <div className="relative hover:scale-105 duration-300">
@@ -246,6 +250,14 @@ const Home: FC = () => {
                         </div>
                       </React.Fragment>
                     ))}
+                    {produtos.filter((produto) => produto.categoria === categoria).length > 4 && (
+                      <a className="flex items-center gap-2 text-gray-500 hover:text-gray-300 duration-100" href={`/categoria/${categoria}`}	 >
+                        <div className="flex flex-col items-center justify-center">
+                          <SlArrowRight  className="h-7 w-7" />
+                          <p>Ver mais</p>
+                        </div>
+                      </a>
+                    )}
                   </div>
                 </div>
               )
