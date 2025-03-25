@@ -55,6 +55,11 @@ const Favoritos: FC = () => {
         <div className="hero min-h-[calc(100vh-64px)] items-start bg-base-200">
           <div className="hero-content flex flex-col gap-4 w-full">
             <h1 className="text-5xl font-light pb-4 text-grey-600 hover:text-gray-300">Favoritos</h1>
+            {produtos_wishlist.length === 0 && (
+              <div className="w-full flex items-center justify-center">
+                <h1 className="text-2xl font-light text-white opacity-90">Nenhum favorito ainda</h1>
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {produtos_wishlist.map((produto) => (
                 <React.Fragment key={produto.id}>

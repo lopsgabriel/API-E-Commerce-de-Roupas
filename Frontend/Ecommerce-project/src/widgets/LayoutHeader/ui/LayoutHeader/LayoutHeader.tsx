@@ -112,6 +112,7 @@ const LayoutHeader: FC = () => {
                   <User
                     links={[
                       ...(isAdmin === "true" ? [{ name: "Adicionar Produto", href: "/adicionar" }] : []),
+                      ...(isAdmin === "true" ? [{ name: "Editar Produto", href: "/editar" }] : []),
                       { name: "Favoritos", href: "/favoritos" },
                       { name: "Meus Pedidos", href: "/pedidos" },
                       { name: "Logout", href: "/logout" },

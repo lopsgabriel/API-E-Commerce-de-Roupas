@@ -79,6 +79,11 @@ const Pedidos: FC = () => {
         <div className="hero min-h-[calc(100vh-64px)] items-start bg-base-200">
           <div className="hero-content flex flex-col gap-4 w-full">
             <h1 className="text-5xl font-light pb-4 text-grey-600 hover:text-gray-300">Pedidos</h1>
+            {pedidos.length === 0 && (
+              <div className="flex flex-col justify-center items-center">
+                <h1 className="text-3xl font-light pb-4 text-grey-600 hover:text-gray-300">Você ainda não tem nenhum pedido</h1>
+              </div>
+            )}
             <div className="w-full flex flex-col justify-center items-center">
               {pedidos.map((pedido) => (
                 <React.Fragment key={pedido.id}>
@@ -101,7 +106,7 @@ const Pedidos: FC = () => {
                             )}
                             {expandido === pedido.id && (
                               <div className=""> 
-                                <a href={`pedido/${pedido.id}`}>
+                                <a href={`produto/${item.produto}`}>
                                   <div className="hover:scale-105 duration-300 flex items-center">
                                     <img src={produtos.find((produto) => produto.id === item.produto)?.imagem} className="w-20 h-20 my-2 rounded-lg" />
                                     <div className="ml-2">

@@ -9,5 +9,6 @@ import { Categoria } from "./Categoria";
 import { SignUp } from "./SignUp";
 import { Favoritos } from "./Favoritos";
 import { Pedidos } from "./Pedidos";
+import { EditProduct } from "./EditProduct";
 
-export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos, Pedidos };
+export { Home, NoMatch, Adicionar, Produto, Login, Logout, Cart, Categoria, SignUp, Favoritos, Pedidos, EditProduct };

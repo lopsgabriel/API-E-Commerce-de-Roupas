@@ -174,11 +174,7 @@ const Home: FC = () => {
               if (produtosNaCategoria.length === 0) {
                 return null; // Ignora a renderização dessa categoria
               }
-
               return (
-              
-
-
                 <div key={categoria} className="pl-44">
                   <div className="flex ">
                     <a  href={`/categoria/${categoria}`} className="text-3xl text-gray-500 font-light hover:text-gray-300 duration-100 pb-4">{categoria}</a>
@@ -201,7 +197,7 @@ const Home: FC = () => {
                                   <VscHeartFilled size={20} />
                                 ) : (
                                   <VscHeart size={20} />
-                              )
+                                )
                               }
                             </button>
                             <a href={`produto/${produto.id}`}>
@@ -251,12 +247,12 @@ const Home: FC = () => {
                       </React.Fragment>
                     ))}
                     {produtos.filter((produto) => produto.categoria === categoria).length > 4 && (
-                      <a className="flex items-center gap-2 text-gray-500 hover:text-gray-300 duration-100" href={`/categoria/${categoria}`}	 >
-                        <div className="flex flex-col items-center justify-center">
+                      <div className="flex items-center gap-2 text-gray-500 hover:text-gray-300 duration-100">
+                        <a className="flex flex-col items-center justify-center" href={`/categoria/${categoria}`}>
                           <SlArrowRight  className="h-7 w-7" />
                           <p>Ver mais</p>
-                        </div>
-                      </a>
+                        </a>
+                      </div>
                     )}
                   </div>
                 </div>
