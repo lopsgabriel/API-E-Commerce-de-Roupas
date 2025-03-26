@@ -81,7 +81,6 @@ const Home: FC = () => {
           setProdutos(filteredProdutos);
 
         setCategorias([...new Set(produtosComCategoria.map((produto) => produto.categoria))]);
-        // setProdutos(produtosComCategoria);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
       }
@@ -167,12 +166,9 @@ const Home: FC = () => {
         <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
           <div className="hero-content flex flex-col gap-4 w-full">
             {categorias.map((categoria) => {
-              // Verificar se há produtos na categoria
               const produtosNaCategoria = produtos.filter((produto) => produto.categoria === categoria);
-              
-              // Se não houver produtos, não renderiza essa categoria
               if (produtosNaCategoria.length === 0) {
-                return null; // Ignora a renderização dessa categoria
+                return null; 
               }
               return (
                 <div key={categoria} className="pl-44">

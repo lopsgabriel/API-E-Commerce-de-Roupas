@@ -58,13 +58,23 @@ const Cart: FC = () => {
     };
 
     const createPedido = async () => {
-      const refresh_token = localStorage.getItem('access_token')
-      const pedido = await axios.post(`${import.meta.env.VITE_URL}pedidos/${user_id}/`,
-        { usuario: user_id,
-          itens: produtos_carrinho.map((produto) => ({ produto: produto.id, quantidade: produto.quantidade }))
-         },
-        { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } }); 
-      console.log(pedido.data)
+      const refresh_token = localStorage.getItem('access_token');
+      // Criando o objeto do body antes de enviar
+      const body = {
+          usuario: user_id,
+          itens: produtos_carrinho.map((produto) => ({ 
+              produto: produto.id, 
+              quantidade: produto.quantidade 
+          }))
+      };
+
+      // Fazendo a requisição
+      const pedido = await axios.post(`${import.meta.env.VITE_URL}pedidos/${user_id}/`, body, {
+          headers: { 
+              'Content-Type': 'application/json', 
+              Authorization: `Bearer ${refresh_token}`
+          }
+      });
       return pedido.data;
     };
     
@@ -122,7 +132,7 @@ const Cart: FC = () => {
                           <div className="text-base font-thin text-center"> R${carrinho.preco}</div>
                           <div className="text-base font-semibold text-center flex justify-between pl-28">
                             <p>
-                            R${parseFloat(carrinho.preco) * carrinho.quantidade}
+                            R${(parseFloat(carrinho.preco) * carrinho.quantidade).toFixed(2)}
                             </p> 
                             <button className="text-red-500 hover:text-red-600 hover:text-xl duration-200"
                             onClick={() => deleteProduct(carrinho.id)}>
@@ -138,7 +148,7 @@ const Cart: FC = () => {
                     <p className="font-bold">Resumo:</p>
                     <div className="flex justify-between py-1 " style={{ borderBottom: '1px solid #C8C8C810' }}>
                       <p className="text-base font-thin">Valor dos produtos: </p> 
-                      <p className="text-base font-thin">R${produtos_carrinho.reduce((total, carrinho) => total + parseFloat(carrinho.preco) * carrinho.quantidade, 0)}</p>
+                      <p className="text-base font-thin">R${(produtos_carrinho.reduce((total, carrinho) => total + parseFloat(carrinho.preco) * carrinho.quantidade, 0)).toFixed(2)}</p>
                     </div>
                     <div className="flex justify-between py-1 " style={{ borderBottom: '1px solid #C8C8C810' }}>
                       <p className="text-base font-thin">Frete:</p>
