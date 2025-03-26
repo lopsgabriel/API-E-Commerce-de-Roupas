@@ -72,12 +72,12 @@ class PedidoSerializer(serializers.ModelSerializer):
         fields = ['id', 'usuario', 'itens', 'data_criacao', 'status']
 
     def create(self, validated_data):
-        itens_data = validated_data.pop('itens')  # Extraindo os itens
+        itens_data = validated_data.pop('itens')
         pedido = Pedido.objects.create(**validated_data)
         
         for item_data in itens_data:
             ItemPedido.objects.create(pedido=pedido, **item_data)  # Criando os itens e associando ao pedido
-        
+            
         return pedido
 
     

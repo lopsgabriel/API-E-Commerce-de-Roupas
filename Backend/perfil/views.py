@@ -210,23 +210,18 @@ class PedidoViewSet(viewsets.ModelViewSet):
     def create(self, request, usuario=None):
         try:
             perfil = Perfil.objects.get(id=usuario)
-            
-            # Serializa o pedido principal
+
+            # Serializa e salva o pedido + itens (delega isso para o serializer)
             pedido_serializer = PedidoSerializer(data=request.data)
             if pedido_serializer.is_valid():
                 pedido = pedido_serializer.save(usuario=perfil)
                 
-                # Adiciona os itens do pedido (se houver)
-                itens_data = request.data.get('itens', [])
-                for item_data in itens_data:
-                    item_serializer = ItemPedidoSerializer(data=item_data)
-                    if item_serializer.is_valid():
-                        item_serializer.save(pedido=pedido)  # Associando item ao pedido
-                    else:
-                        return Response(item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                
-                return Response(pedido_serializer.data, status=status.HTTP_201_CREATED)
+                # Serializa novamente o pedido com os itens incluídos
+                pedido_completo = PedidoSerializer(pedido)
+                return Response(pedido_completo.data, status=status.HTTP_201_CREATED)
+
             return Response(pedido_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
         except Perfil.DoesNotExist:
             return Response({"detail": "Perfil não encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
