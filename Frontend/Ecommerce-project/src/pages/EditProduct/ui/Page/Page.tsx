@@ -14,10 +14,14 @@ interface Produto {
 }
 
 interface Categoria {
-  id: number
-  nome: string
+  id: number;
+  nome: string;
 }
 
+/**
+ * Componente para editar um produto.
+ * O componente permite que o usuário selecione um produto, edite suas informações e salve as alterações.
+ */
 const EditProduct: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
@@ -25,8 +29,12 @@ const EditProduct: FC = () => {
   const navigate = useNavigate();
   const [optionsVisible, setoptionsVisible] = useState(true);
   const [produtoVisible, setProdutoVisible] = useState(false);
-  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
 
+  /**
+   * Efeito que busca os produtos e as categorias assim que o componente é montado.
+   * Faz a requisição dos dados das categorias e produtos ao backend.
+   */
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
@@ -56,22 +64,30 @@ const EditProduct: FC = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
-        })
-        setCategorias(response.data)
+        });
+        setCategorias(response.data);
       } catch (error) {
-        console.error("Erro ao buscar categorias:", error)
+        console.error("Erro ao buscar categorias:", error);
       }
-    }
+    };
 
     fetchCategorias();
     fetchProdutos();
   }, [navigate]);
 
+  /**
+   * Função para lidar com as mudanças de valores nos campos de entrada do formulário.
+   * Atualiza o estado do produto selecionado conforme os campos são alterados.
+   */
   const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setSelectedProduto(selectedProduto ? { ...selectedProduto, [name]: value } : null)
-  }
+    const { name, value } = e.target;
+    setSelectedProduto(selectedProduto ? { ...selectedProduto, [name]: value } : null);
+  };
 
+  /**
+   * Função para lidar com a seleção de um arquivo de imagem.
+   * Atualiza o estado de imagem do produto com o arquivo selecionado.
+   */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -85,8 +101,12 @@ const EditProduct: FC = () => {
           };
       }); 
     }
-};
+  };
 
+  /**
+   * Função responsável por salvar as alterações no produto.
+   * Envia os dados do produto para o backend, incluindo as mudanças no nome, descrição, preço, estoque, categoria e imagem.
+   */
   const handleSave = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedProduto) {
@@ -117,7 +137,6 @@ const EditProduct: FC = () => {
       }
     }
   };
-
 
   return (
     <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
@@ -262,7 +281,6 @@ const EditProduct: FC = () => {
       </div>
     </div>
   );
-  
 };
 
 export default EditProduct;

@@ -3,6 +3,14 @@ import { Menu } from "../../model/types";
 import { Link } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 
+/**
+ * Componente que exibe um ícone de usuário e um menu suspenso.
+ * O menu contém uma lista de links passados como propriedade, permitindo
+ * que o usuário navegue para diferentes páginas do sistema.
+ * 
+ * O componente utiliza o ícone de usuário (FaRegUser) da biblioteca react-icons
+ * e a funcionalidade de dropdown do framework TailwindCSS.
+ */
 const User: FC<Menu> = ({ links }: Menu) => {
   return (
     <>
@@ -28,3 +36,4 @@ const User: FC<Menu> = ({ links }: Menu) => {
 };
 
 export default User;
+

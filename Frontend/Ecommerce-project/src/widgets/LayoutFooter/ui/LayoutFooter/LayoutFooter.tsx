@@ -5,17 +5,17 @@ const LayoutFooter: FC = () => {
     <>
       <footer className="footer bg-base-300 p-10 text-base-content">
         <div>
-          <span className="footer-title">Services</span>
+          <span className="footer-title">Serviços</span>
           <a className="link-hover link">Branding</a>
           <a className="link-hover link">Design</a>
           <a className="link-hover link">Marketing</a>
-          <a className="link-hover link">Advertisement</a>
+          <a className="link-hover link">Publicidade</a>
         </div>
         <div>
-          <span className="footer-title">Company</span>
-          <a className="link-hover link">About us</a>
-          <a className="link-hover link">Contact</a>
-          <a className="link-hover link">Jobs</a>
+          <span className="footer-title">Empresa</span>
+          <a className="link-hover link">Sobre nós</a>
+          <a className="link-hover link">Contato</a>
+          <a className="link-hover link">Trabalhe conosco</a>
           <a className="link-hover link">Press kit</a>
         </div>
         <div>

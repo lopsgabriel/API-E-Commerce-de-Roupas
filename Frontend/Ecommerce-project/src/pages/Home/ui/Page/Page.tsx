@@ -32,6 +32,14 @@ interface ProdutosCarrinho {
   quantidade: number;
 }
 
+/**
+ * Página principal de produtos, com funcionalidades de busca, 
+ * lista de desejos e carrinho de compras.
+ * 
+ * O componente gerencia a exibição de produtos, busca por nome,
+ * categoria e descrição, e permite a interação com as listas de
+ * desejos e carrinho de compras.
+ */
 const Home: FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [categorias, setCategorias] = useState<string[]>([])
@@ -40,8 +48,12 @@ const Home: FC = () => {
   const navigate = useNavigate()
   const user_id = localStorage.getItem("user_id");
   const { searchQuery } = useSearch();
-  const location = useLocation(); 
+  const location = useLocation();
 
+  /**
+   * Efeito colateral que gerencia a atualização da URL com base na 
+   * pesquisa do usuário, adicionando ou removendo parâmetros de busca.
+   */
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     if (searchQuery) {
@@ -52,6 +64,12 @@ const Home: FC = () => {
     navigate({ search: queryParams.toString() }, { replace: true });
   }, [searchQuery, navigate, location.search]);
 
+  /**
+   * Efeito colateral que busca e configura os dados dos produtos, 
+   * lista de desejos e carrinho de compras. 
+   * 
+   * Também filtra os produtos com base na pesquisa do usuário.
+   */
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
@@ -88,11 +106,12 @@ const Home: FC = () => {
     fetchProdutos();
   }, [navigate, user_id, searchQuery]);
 
-
-
-
+  /**
+   * Função que adiciona ou remove um produto da lista de desejos 
+   * ou do carrinho de compras, dependendo do tipo de lista fornecido.
+   * 
+   */
   async function togglelist(produtoId: number, listType: "carrinhos" | "listaDesejos") {
-
     const listas: Record<string, { produto: number }[]> = {
       carrinhos: listaCarrinho.map((item) => ({ produto: item.produto })),
       listaDesejos: listaDesejos.map((item) => ({ produto: item.produto }))
@@ -105,13 +124,13 @@ const Home: FC = () => {
 
     try {
       const refreshtoken = localStorage.getItem("access_token");
-  
-      // Verificar se o produto ta na lista 
+
+      // Verificar se o produto ta na lista
       const lista = listas[listType];
       const isInLista = lista.some(item => item.produto === produtoId);
-  
+
       if (isInLista) {
-        // Remover da lista 
+        // Remover da lista
         await axios.delete(`${import.meta.env.VITE_URL}/${listType}/${user_id}/${produtoId}/`, {
           headers: { 'Authorization': `Bearer ${refreshtoken}` }
         });
@@ -136,7 +155,6 @@ const Home: FC = () => {
             'produto': produtoId, 
             'quantidade': 1
           }]);
-          console.log(setListas)
         } else {
           await axios.post(
             `${import.meta.env.VITE_URL}${listType}/${user_id}/`,
@@ -145,21 +163,20 @@ const Home: FC = () => {
               'produto': produtoId
             },
             {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${refreshtoken}`
-            }
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${refreshtoken}`
+              }
             }
           )
           setListas[listType]((prev: ListaDesejo[]) => [...prev, { usuario: Number(user_id), usuario_nome: "", produto: produtoId, produto_nome: "" }]);
         }
-        }
+      }
     } catch (error) {
       console.error("Erro ao atualizar a lista ", error);
     }
   }
   
-
   return (
     <>
       <section>

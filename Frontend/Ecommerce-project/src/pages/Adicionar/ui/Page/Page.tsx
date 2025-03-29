@@ -3,27 +3,32 @@ import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 interface Produto {
-  nome: string
-  descricao: string
-  preco: number
-  estoque: number
-  categoria: number
-  foto: File | null
+  nome: string;
+  descricao: string;
+  preco: number;
+  estoque: number;
+  categoria: number;
+  foto: File | null;
 }
 
 interface DadosResposta {
-  id: number
-  success: boolean
+  id: number;
+  success: boolean;
 }
 
 interface Categoria {
-  id: number
-  nome: string
+  id: number;
+  nome: string;
 }
 
+/**
+ * Página para adicionar um novo produto. Permite ao usuário preencher um formulário com detalhes do produto,
+ * incluindo nome, descrição, preço, estoque, categoria e foto. 
+ * Ao submeter o formulário, o produto é enviado para o servidor e o usuário é redirecionado para a página principal.
+ */
 const Adicionar: FC = () => {
-  const navigate = useNavigate()
-  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const navigate = useNavigate();
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [produto, setProduto] = useState<Produto>({
     nome: "",
     descricao: "",
@@ -31,8 +36,9 @@ const Adicionar: FC = () => {
     estoque: 0,
     categoria: 0,
     foto: null,
-  })
-  
+  });
+
+  // Fetch as categorias disponíveis para o produto ao carregar a página
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -41,71 +47,71 @@ const Adicionar: FC = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
-        })
-        setCategorias(response.data)
+        });
+        setCategorias(response.data);
       } catch (error) {
-        console.error("Erro ao buscar categorias:", error)
+        console.error("Erro ao buscar categorias:", error);
       }
-    }
+    };
 
     fetchCategorias();
   }, []);
+
+  // Função para criar o produto no servidor
   const CriarProduto = async (produto: Produto) => {
     const formData = new FormData();
-    formData.append("nome", produto.nome)
-    formData.append("descricao", produto.descricao)
-    formData.append("preco", String(produto.preco))
-    formData.append("estoque", String(produto.estoque))
-    formData.append("categoria", String(produto.categoria))
+    formData.append("nome", produto.nome);
+    formData.append("descricao", produto.descricao);
+    formData.append("preco", String(produto.preco));
+    formData.append("estoque", String(produto.estoque));
+    formData.append("categoria", String(produto.categoria));
     if (produto.foto) {
-      formData.append("imagem", produto.foto as File)
+      formData.append("imagem", produto.foto as File);
     }
 
     try {
       const response = await axios.post<DadosResposta>(`${import.meta.env.VITE_URL}produtos/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data', authorization: `Bearer ${localStorage.getItem('access_token')}` },
-        
-      })
-      console.log(response.data)
-      // quero que seja redirecionado para pagina principal depois que o produto for criado
-      navigate('/')
-
-    } catch (error ) {
+      });
+      console.log(response.data);
+      navigate('/'); // Redireciona para a página principal após criar o produto
+    } catch (error) {
       if (error instanceof AxiosError) {
-        console.error("Erro na resposta:", error.response?.data)
-        console.error("Código de status:", error.response?.status)
+        console.error("Erro na resposta:", error.response?.data);
+        console.error("Código de status:", error.response?.status);
       } else {
-        console.error("Erro ao enviar o produto:", error)
+        console.error("Erro ao enviar o produto:", error);
       }
     }
-  }
+  };
 
+  // Manipula as mudanças nos campos de input
   const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setProduto({ ...produto, [name]: value })
-  }
+    const { name, value } = e.target;
+    setProduto({ ...produto, [name]: value });
+  };
 
+  // Manipula a seleção do arquivo de foto
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-        setProduto({ ...produto, foto: e.target.files[0] })
-        console.log("Arquivo selecionado:", e.target.files[0])
-        console.log(produto)
+      setProduto({ ...produto, foto: e.target.files[0] });
+      console.log("Arquivo selecionado:", e.target.files[0]);
     } else {
-        console.warn("Nenhum arquivo selecionado");
+      console.warn("Nenhum arquivo selecionado");
     }
-}
+  };
 
+  // Submete o formulário
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       if (produto.foto) {
-        await CriarProduto(produto)
+        await CriarProduto(produto);
       }
-      
     } catch (error) {
-      console.error('Erro ao criar produto:', error)
+      console.error('Erro ao criar produto:', error);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-base-200 py-3">
@@ -171,7 +177,7 @@ const Adicionar: FC = () => {
           >
             <option value={0}>Selecione uma categoria</option>
             {categorias.map(categoria => (
-              <option key={categoria.id} value={categoria.id} >
+              <option key={categoria.id} value={categoria.id}>
                 {categoria.nome}
               </option>
             ))}
@@ -194,7 +200,7 @@ const Adicionar: FC = () => {
         </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Adicionar
+export default Adicionar;

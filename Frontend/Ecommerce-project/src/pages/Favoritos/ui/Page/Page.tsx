@@ -21,16 +21,39 @@ interface ProdutoW {
   imagem: string;
 }
 
+/**
+ * Componente de exibição dos produtos na lista de desejos (favoritos).
+ * Realiza uma requisição para buscar os produtos favoritados pelo usuário logado.
+ * 
+ * Utiliza o React Hook useEffect para fazer a busca dos dados ao carregar o componente
+ * e exibe uma lista de produtos com informações como nome, descrição, preço e categoria.
+ * 
+ * O usuário pode visualizar seus favoritos e clicar em um produto para ver mais detalhes.
+ */
 const Favoritos: FC = () => {
+  // Estado que armazena os produtos da wishlist
   const [produtos_wishlist, setProdutos_wishlist] = useState<ProdutoW[]>([]);
-  const navigate = useNavigate()
+  
+  // Navegação para outras páginas
+  const navigate = useNavigate();
+
   useEffect(() => {
+    /**
+     * Função para buscar os produtos da wishlist do usuário logado.
+     * Realiza requisições para as APIs de lista de desejos, produtos e categorias.
+     */
     const fetchProdutosWishlist = async () => {
       try {
+        // Obtém o ID do usuário e o refresh token do localStorage
         const userId = localStorage.getItem("user_id");
         const refreshtoken = localStorage.getItem("refresh_token");
+
+        // Faz requisição para obter os produtos na lista de desejos
         const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/listaDesejos/${userId}/`, refreshtoken, navigate);
-        console.log(produtosData)
+
+        console.log(produtosData);
+
+        // Mapeia os dados da wishlist para incluir as informações dos produtos e suas categorias
         const listaProdutos = await Promise.all(
           produtosData.map(async (carrinho: ProdutosWishlist) => {
             const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate);
@@ -41,11 +64,16 @@ const Favoritos: FC = () => {
             };
           })
         )
+
+        // Atualiza o estado com a lista de produtos
         setProdutos_wishlist(listaProdutos);
       } catch (error) {
+        // Tratamento de erro caso a requisição falhe
         console.error("Erro ao buscar produtos:", error);
       }
     };
+
+    // Chama a função para buscar os produtos
     fetchProdutosWishlist();
   }, [navigate]);
 

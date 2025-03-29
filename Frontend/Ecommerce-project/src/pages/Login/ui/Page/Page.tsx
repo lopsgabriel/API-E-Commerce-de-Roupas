@@ -16,17 +16,30 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  /**
+   * Efeito responsável por verificar se o usuário já está autenticado.
+   * Caso o token de acesso esteja presente no armazenamento local, o usuário é redirecionado para a página de dashboard.
+   */
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       navigate("/dashboard");
     }
   }, [navigate]);
 
+  /**
+   * Função que atualiza o estado do formulário sempre que o usuário digita nos campos.
+   * O valor dos campos de entrada (username e password) é armazenado no estado.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
+  /**
+   * Função responsável por enviar as credenciais de login para a API e realizar o processo de autenticação.
+   * Se a autenticação for bem-sucedida, os tokens de acesso e atualização, juntamente com as informações do usuário, são salvos no armazenamento local.
+   * Caso contrário, exibe uma mensagem de erro.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Previne o comportamento padrão do formulário de recarregar a página
     try {

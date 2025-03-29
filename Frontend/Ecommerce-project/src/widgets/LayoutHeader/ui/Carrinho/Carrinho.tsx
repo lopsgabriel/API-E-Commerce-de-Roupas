@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { FC, useEffect, useState } from "react";
 import { TbShoppingCart } from "react-icons/tb";
 
+/**
+ * Interface `ProdutosCarrinho` define os dados dos itens no carrinho do usuário.
+ * Ela inclui informações sobre o produto, a quantidade e o usuário que adicionou o item ao carrinho.
+ */
 interface ProdutosCarrinho {
   id: number;
   usuario: number;
@@ -12,6 +16,10 @@ interface ProdutosCarrinho {
   quantidade: number;
 }
 
+/**
+ * Interface `Carrinho` define a estrutura dos produtos no carrinho, incluindo o nome, descrição,
+ * preço, estoque, categoria, imagem e quantidade.
+ */
 interface Carrinho {
   id: number;
   nome: string;
@@ -23,36 +31,55 @@ interface Carrinho {
   quantidade: number;
 }
 
+/**
+ * Componente `Carrinho` exibe o ícone de carrinho de compras com a lista de produtos 
+ * no carrinho do usuário. O componente permite a atualização dinâmica do conteúdo do carrinho,
+ * recuperando dados da API e atualizando o estado com as informações mais recentes.
+ * 
+ * A lógica de atualização do carrinho é implementada através do hook `useEffect` para buscar
+ * os produtos do carrinho do usuário, e o hook `CartUpdate` para atualizar a lista de produtos 
+ * no estado local. Os produtos exibidos incluem o nome, preço e quantidade.
+ * 
+ * O carrinho é exibido em um menu dropdown que se expande quando o usuário clica no ícone
+ * do carrinho. Se o carrinho estiver vazio, uma mensagem é exibida. Caso contrário, os produtos
+ * do carrinho são listados, permitindo ao usuário acessar mais informações sobre cada item.
+ */
 const Carrinho: FC = () => {
-  const { atualizarCarrinho } = CartUpdate(); 
-  const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]);
-  const navigate = useNavigate();
+  const { atualizarCarrinho } = CartUpdate(); // Função para atualizar o carrinho
+  const [produtos_carrinho, setProdutos_carrinho] = useState<Carrinho[]>([]); // Estado para armazenar os produtos no carrinho
+  const navigate = useNavigate(); // Hook para navegação
 
+  // Efeito que busca os produtos do carrinho do usuário ao carregar o componente
   useEffect(() => {
     const fetchProdutosCarrinho = async () => {
       try {
-        const userId = localStorage.getItem("user_id");
-        const refreshtoken = localStorage.getItem("refresh_token");
-        const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate);
+        const userId = localStorage.getItem("user_id"); // Obtém o ID do usuário do localStorage
+        const refreshtoken = localStorage.getItem("refresh_token"); // Obtém o refresh token
+        const produtosData = await fetchAuthApi(`${import.meta.env.VITE_URL}/carrinhos/${userId}/`, refreshtoken, navigate); // Busca os dados do carrinho
 
+        // Mapeia os dados do carrinho para buscar informações detalhadas de cada produto
         const listaProdutos = await Promise.all(
           produtosData.map(async (carrinho: ProdutosCarrinho) => {
-            const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate);
-            produto.quantidade = carrinho.quantidade;
-            return produto
+            const produto = await fetchAuthApi(`${import.meta.env.VITE_URL}/produtos/${carrinho.produto}/`, refreshtoken, navigate); // Busca o produto específico
+            produto.quantidade = carrinho.quantidade; // Adiciona a quantidade do produto no carrinho
+            return produto;
           })
-        ) 
-        setProdutos_carrinho(listaProdutos);
+        );
+        setProdutos_carrinho(listaProdutos); // Atualiza o estado com a lista de produtos
       } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
+        console.error("Erro ao buscar produtos:", error); // Exibe erro caso falhe ao buscar os produtos
       }
     };
     fetchProdutosCarrinho();
-  }, [navigate, ]);
+  }, [navigate]); // O efeito é reexecutado quando o hook `navigate` é alterado
 
+  /**
+   * Função que atualiza a lista de produtos do carrinho.
+   * Chama a função `atualizarCarrinho` e atualiza o estado com os produtos mais recentes.
+   */
   async function atualizar_Carrinho() {
     const produtosAtualizados = await atualizarCarrinho(); // Obtém os produtos atualizados
-    setProdutos_carrinho(produtosAtualizados); // Atualiza o estado local diretamente
+    setProdutos_carrinho(produtosAtualizados); // Atualiza o estado local com os produtos atualizados
   }
 
   return (
@@ -71,7 +98,7 @@ const Carrinho: FC = () => {
                 <p className="text-center justify-center">Seu carrinho está vazio</p>
               </li>
             ) : (
-              // chamar função atualizar carrinho
+              // Exibe os produtos do carrinho
               produtos_carrinho.map((produto) => (
                 <li key={produto.id} >
                   <div className="divider"></div>

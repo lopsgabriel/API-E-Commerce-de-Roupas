@@ -9,8 +9,15 @@ interface SearchContextType {
 // Criando o contexto
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-// Componente Provider que envolverá toda a aplicação
+/**
+ * Componente Provider que fornece o contexto de busca para toda a aplicação.
+ * 
+ * O componente `SearchProvider` envolve a aplicação, permitindo que qualquer componente filho acesse o contexto
+ * de busca (`searchQuery`) e o atualize usando a função `setSearchQuery`.
+ * 
+ */
 export const SearchProvider: FC<{ children: React.ReactNode }> = ({ children }) => { 
+  // Estado que armazena o valor da busca
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   return (
