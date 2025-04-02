@@ -94,7 +94,7 @@ const Pedidos: FC = () => {
             {/* Exibe mensagem caso o usuário não tenha pedidos */}
             {pedidos.length === 0 && (
               <div className="flex flex-col justify-center items-center">
-                <h1 className="text-3xl font-light pb-4 text-grey-600 hover:text-gray-300">Você ainda não tem nenhum pedido</h1>
+                <h1 className="text-3xl font-light pb-4 text-grey-600 hover:text-gray-300">Você ainda não fez nenhuma compra.</h1>
               </div>
             )}
             <div className="w-full flex flex-col justify-center items-center">

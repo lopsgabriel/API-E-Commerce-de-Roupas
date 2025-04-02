@@ -110,7 +110,9 @@ const Carrinho: FC = () => {
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{produto.nome}</div>
+                        <div className="font-bold">
+                          {produto.nome.length > 20 ? produto.nome.slice(0, 20).concat("...") : produto.nome}
+                        </div>
                         <div className="text-sm opacity-50">Preço: R${Number(produto.preco) * produto.quantidade}</div>
                         <div className="text-sm opacity-50">Quantidade: {produto.quantidade}</div>
                       </div>

@@ -141,9 +141,9 @@ const Cart: FC = () => {
 
     return (
       <div className="hero min-h-[calc(100vh-64px)] bg-base-200">
-        <div className="w-full flex justify-center">
-          <div className="items-center justify-center h-full w-10/12 px-4 bg-base-100 rounded-lg">
-            <div className="flex flex-col items-center border-b-2 border-gray-200 border-opacity-30 py-2">
+        <div className="w-full flex justify-center m-10">
+          <div className="items-center justify-center h-full w-8/12 px-4 bg-base-100 rounded-lg">
+            <div className="flex flex-col items-center border-b-2 border-gray-200 border-opacity-30 p-4">
               <div className="grid grid-cols-4 w-full max-w-5xl py-2 ">
                 <p className="font-medium text-center">Produtos</p>
                 <p className="font-medium text-center">Quantidade</p>
@@ -165,11 +165,9 @@ const Cart: FC = () => {
                     </div>
                     <div className="text-base font-thin text-center">{carrinho.quantidade}</div>
                     <div className="text-base font-thin text-center">R${carrinho.preco}</div>
-                    <div className="text-base font-semibold text-center flex justify-between pl-28">
-                      <p>
-                        R${(parseFloat(carrinho.preco) * carrinho.quantidade).toFixed(2)}
-                      </p>
-                      <button className="text-red-500 hover:text-red-600 hover:text-xl duration-200"
+                    <div className="text-base font-semibold text-center flex justify-center">
+                      <p>R${(parseFloat(carrinho.preco) * carrinho.quantidade).toFixed(2)}</p>
+                      <button className="ml-2 text-red-500 hover:text-red-600 hover:text-xl duration-200"
                         onClick={() => deleteProduct(carrinho.id)}>
                         <TbTrashFilled />
                       </button>
@@ -179,11 +177,11 @@ const Cart: FC = () => {
               )}
             </div>
             <div className="flex items-center space-x-4 pb-4 justify-center py-4">
-              <div className="flex flex-col w-1/5">
+              <div className="flex flex-col w-2/5">
                 <p className="font-bold">Resumo:</p>
                 <div className="flex justify-between py-1" style={{ borderBottom: '1px solid #C8C8C810' }}>
                   <p className="text-base font-thin">Valor dos produtos: </p> 
-                  <p className="text-base font-thin">R${(produtos_carrinho.reduce((total, carrinho) => total + parseFloat(carrinho.preco) * carrinho.quantidade, 0)).toFixed(2)}</p>
+                  <p className="text-base font-thin ">R${(produtos_carrinho.reduce((total, carrinho) => total + parseFloat(carrinho.preco) * carrinho.quantidade, 0)).toFixed(2)}</p>
                 </div>
                 <div className="flex justify-between py-1" style={{ borderBottom: '1px solid #C8C8C810' }}>
                   <p className="text-base font-thin">Frete:</p>
