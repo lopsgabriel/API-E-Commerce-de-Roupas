@@ -73,7 +73,7 @@ const Cart: FC = () => {
       await axios.delete(`${import.meta.env.VITE_URL}carrinhos/${user_id}/${id}/`, { 
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refresh_token}` } 
       }); 
-      setProdutos_carrinho([]);
+      setProdutos_carrinho(produtos_carrinho.filter((produto) => produto.id !== id));
     };
 
     /**
@@ -101,6 +101,11 @@ const Cart: FC = () => {
       return pedido.data;
     };
 
+    const handleDeleteAll = async () => {
+      await Promise.all(produtos_carrinho.map(produto => deleteProduct(produto.id)));
+      setProdutos_carrinho([]); // Só limpa a lista depois que todas as exclusões terminarem
+    };    
+
     /**
      * Função que processa o checkout, atualizando o estoque dos produtos e criando o pedido.
      * Para cada produto no carrinho, atualiza o estoque na API e, após isso, cria o pedido.
@@ -127,8 +132,7 @@ const Cart: FC = () => {
         // Criar o pedido após todos os produtos serem atualizados
         await createPedido();
     
-        // Se deu certo, deletar os produtos do carrinho
-        produtos_carrinho.forEach(produto => deleteProduct(produto.id));
+        handleDeleteAll();
     
       } catch (error) {
         if (axios.isAxiosError(error)) {

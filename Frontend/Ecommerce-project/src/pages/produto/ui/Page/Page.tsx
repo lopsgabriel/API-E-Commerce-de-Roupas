@@ -49,9 +49,9 @@ interface NotificationProps {
 const Notification = ({ message, onClose }: NotificationProps) => {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: -20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      exit={{ opacity: 0, y: -20 }} 
+      initial={{ opacity: 0, y: 790 }} 
+      animate={{ opacity: 1, y: 590 }} 
+      exit={{ opacity: 0, y: 790 }} 
       className="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg"
     >
       {message}
@@ -200,7 +200,6 @@ const Produto: FC = () => {
     atualizarCarrinho();
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
-    navigate('/cart');
   }
 
   return (
@@ -259,10 +258,10 @@ const Produto: FC = () => {
             </div>
           </div>
         </div>
+        <AnimatePresence>
+          {showNotification && <Notification message="Item adicionado ao carrinho!" onClose={() => setShowNotification(false)} />}
+        </AnimatePresence>
       </div>
-      <AnimatePresence>
-        {showNotification && <Notification message="Item adicionado ao carrinho!" onClose={() => setShowNotification(false)} />}
-      </AnimatePresence>
     </section>
   );
 };

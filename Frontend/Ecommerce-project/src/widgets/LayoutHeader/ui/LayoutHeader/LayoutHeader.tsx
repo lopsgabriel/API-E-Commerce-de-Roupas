@@ -5,7 +5,7 @@ import { useState } from "react";
 import Carrinho from "../Carrinho/Carrinho";
 import { useLocation } from 'react-router-dom';
 import { useSearch } from "@/components";
-
+import { useNavigate } from "react-router-dom";
 /**
  * Componente `LayoutHeader` que exibe o cabeçalho da aplicação.
  * O cabeçalho inclui o logo, barra de pesquisa, links de navegação
@@ -28,7 +28,7 @@ const LayoutHeader: FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);  // Estado que controla a expansão do campo de pesquisa
   const { setSearchQuery } = useSearch();  // Hook customizado para controlar a query de pesquisa
   const [search, setSearch] = useState<string>("");  // Estado para armazenar o valor da pesquisa
-
+  const navigate = useNavigate();  // Hook para navegação entre paginas
   // Efeito que verifica a autenticação e manipula a exibição de elementos com base na localização
   useEffect(() => {
     const token = localStorage.getItem("access_token");  // Obtém o token de acesso armazenado no localStorage
@@ -64,6 +64,7 @@ const LayoutHeader: FC = () => {
    * @param e - Evento de teclado que dispara a função
    */
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    navigate('/dashboard');
     setSearchQuery((e.target as HTMLInputElement).value);  // Atualiza o valor da pesquisa
   };
 
