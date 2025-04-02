@@ -252,8 +252,8 @@ const Produto: FC = () => {
                 onChange={(e) => setQuantidade(parseInt(e.target.value))}
                 className="w-20 text-center border border-gray-300 rounded-lg p-2 shadow-sm"
               />
-              <button onClick={() => handleComprar()} className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all">
-                Comprar
+              <button onClick={() => handleComprar()} className="bg-blue-600 text-white text-sm font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all">
+                ADICIONAR AO CARRINHO
               </button>
             </div>
           </div>
