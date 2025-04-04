@@ -8,6 +8,8 @@ import axios from "axios";
 import { VscHeartFilled } from "react-icons/vsc";
 import { TbShoppingCartCopy, TbShoppingCartPlus } from "react-icons/tb";
 import { SlArrowRight } from "react-icons/sl";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 interface Produto {
   id: number;
@@ -32,6 +34,26 @@ interface ProdutosCarrinho {
   quantidade: number;
 }
 
+interface NotificationProps {
+  message: string;
+  onClose: () => void;
+}
+
+
+const Notification = ({ message, onClose }: NotificationProps) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 790 }} 
+      animate={{ opacity: 1, y: 590 }} 
+      exit={{ opacity: 0, y: 790 }} 
+      className="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg"
+    >
+      {message}
+      <button onClick={onClose} className="ml-4 text-white font-bold">×</button>
+    </motion.div>
+  );
+};
+
 /**
  * Página principal de produtos, com funcionalidades de busca, 
  * lista de desejos e carrinho de compras.
@@ -49,6 +71,7 @@ const Home: FC = () => {
   const user_id = localStorage.getItem("user_id");
   const { searchQuery } = useSearch();
   const location = useLocation();
+  const [showNotification, setShowNotification] = useState(false);
 
   /**
    * Efeito colateral que gerencia a atualização da URL com base na 
@@ -155,6 +178,8 @@ const Home: FC = () => {
             'produto': produtoId, 
             'quantidade': 1
           }]);
+          setShowNotification(true);
+          setTimeout(() => setShowNotification(false), 1200);
         } else {
           await axios.post(
             `${import.meta.env.VITE_URL}${listType}/${user_id}/`,
@@ -272,6 +297,9 @@ const Home: FC = () => {
               )
             })}
           </div>
+          <AnimatePresence>
+            {showNotification && <Notification message="Item adicionado ao carrinho!" onClose={() => setShowNotification(false)} />}
+          </AnimatePresence>
         </div>
       </section>
     </>

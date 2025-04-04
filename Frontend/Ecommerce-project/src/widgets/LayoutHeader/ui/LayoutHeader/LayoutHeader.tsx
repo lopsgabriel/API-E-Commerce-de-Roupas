@@ -70,7 +70,7 @@ const LayoutHeader: FC = () => {
 
   return (
     <>
-      {location.pathname !== '/' && (
+      {location.pathname !== '/' && location.pathname !== '/signup' && (
         <header>
           <nav className="navbar bg-base-100 justify-between">
             {/* Logo */}

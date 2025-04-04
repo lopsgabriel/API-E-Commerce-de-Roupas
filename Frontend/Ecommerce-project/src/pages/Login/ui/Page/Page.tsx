@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Corrigido import de jwtDecode
+import { Logo } from "@/widgets";
 
 interface Usuario {
   username: string;
@@ -75,12 +76,15 @@ const Login = () => {
     <section>
       <div className="pt-40 min-h-[calc(100vh-64px)] bg-base-200">
         <div className="login-form flex flex-col justify-center items-center">
-          <form onSubmit={handleSubmit} className="flex flex-col items-center bg-base-100 p-8 rounded-xl shadow-lg w-full max-w-lg mb-4">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center bg-base-100 px-8 pb-8 pt-6 rounded-xl shadow-lg w-full max-w-lg mb-4">
+            <div className='flex justify-center mb-2'>
+              <Logo logoName={"E-Loja"} />
+            </div>
             <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
             <input
               type="text"
               name="username"
-              placeholder="Username"
+              placeholder="Usuário"
               value={form.username}
               onChange={handleChange}
               className="w-full px-4 py-2 bg-base-200 rounded-lg my-2"
@@ -88,7 +92,7 @@ const Login = () => {
             <input
               type="password"
               name="password"
-              placeholder="Password"
+              placeholder="Senha"
               value={form.password}
               onChange={handleChange}
               className="w-full px-4 py-2 bg-base-200 rounded-lg my-2"
@@ -100,9 +104,9 @@ const Login = () => {
               Login
             </button>
           <p>
-            Don't have an account?{" "}
+            Ainda não tem uma conta?{" "}
             <a href="/signup" className="text-cyan-600 font-bold hover:underline">
-              Sign Up
+              Crie sua conta
             </a>
           </p>
           </form>

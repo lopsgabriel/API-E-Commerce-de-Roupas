@@ -133,7 +133,7 @@ const Cart: FC = () => {
         await createPedido();
     
         handleDeleteAll();
-    
+        navigate('/pedidos')
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Erro no processo de checkout:', error.response?.data);

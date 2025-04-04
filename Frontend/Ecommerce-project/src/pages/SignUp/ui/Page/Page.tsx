@@ -1,6 +1,7 @@
 import { FC, useState, ChangeEvent, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { Logo } from "@/widgets";
 
 // Definição da interface Usuario que descreve os dados do usuário no formulário de registro
 interface Usuario {
@@ -57,13 +58,16 @@ const SignUp: FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-base-200 py-3">
       <form onSubmit={handleSubmit} className="bg-base-100 p-8 rounded-xl shadow-lg w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
+        <div className='flex justify-center mb-2'>
+          <Logo logoName={"E-Loja"} />
+        </div>
+        <h1 className="text-2xl font-bold mb-6 text-center">Crie sua conta</h1>
         <div className="mb-4">
           <input
             type="text"
             id="username"
             name="username"
-            placeholder="Username"
+            placeholder="Usuário"
             value={usuario.username}  // Valor controlado do campo
             onChange={handleChange}  // Atualiza o estado ao digitar
             className="w-full px-4 py-2 bg-base-200 rounded-lg"
@@ -87,7 +91,7 @@ const SignUp: FC = () => {
             type="password"
             id="password"
             name="password"
-            placeholder="Password"
+            placeholder="Senha"
             value={usuario.password}  // Valor controlado do campo
             onChange={handleChange}  // Atualiza o estado ao digitar
             className="w-full px-4 py-2 bg-base-200 rounded-lg"
@@ -98,12 +102,12 @@ const SignUp: FC = () => {
           type="submit"
           className="w-full py-2 px-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 duration-300"
         >
-          Sign Up
+          Criar conta
         </button>
         <p className="mt-4 text-center">
-          Do you have an account?{" "}
-          <a href="/" className="text-blue-500 font-semibold hover:underline">
-            Login
+          Já tem uma conta?{" "}
+          <a href="/" className="text-green-500 font-semibold hover:underline">
+            Entrar
           </a>
         </p>
       </form>
